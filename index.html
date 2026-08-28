@@ -1368,6 +1368,135 @@
             font-size: 1rem;
         }
 
+        .gb-msg-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .gb-action-btn {
+            padding: 4px 12px;
+            border: 1.5px solid var(--rule);
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: #636e72;
+            transition: all 0.2s;
+            font-family: var(--font-xingkai);
+        }
+
+        .gb-action-btn:hover {
+            border-color: var(--accent2);
+            color: var(--accent2);
+        }
+
+        .gb-action-btn.delete-btn:hover {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .gb-reply-form {
+            margin-top: 10px;
+            padding: 12px;
+            background: rgba(116, 185, 255, 0.08);
+            border-radius: 10px;
+            border: 1.5px dashed var(--rule);
+            display: none;
+        }
+
+        .gb-reply-form.show {
+            display: block;
+            animation: msgSlideIn 0.2s ease;
+        }
+
+        .gb-reply-form input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1.5px solid var(--rule);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            outline: none;
+            font-family: var(--font-xingkai);
+        }
+
+        .gb-reply-form textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1.5px solid var(--rule);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            resize: vertical;
+            min-height: 50px;
+            margin-bottom: 8px;
+            font-family: var(--font-xingkai);
+        }
+
+        .gb-reply-btn-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .gb-reply-submit {
+            flex: 1;
+            padding: 8px;
+            background: var(--accent2);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: var(--font-xingkai);
+        }
+
+        .gb-reply-cancel {
+            padding: 8px 16px;
+            background: #ddd;
+            color: #666;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: var(--font-xingkai);
+        }
+
+        .gb-replies {
+            margin-top: 10px;
+            margin-left: 20px;
+            padding-left: 15px;
+            border-left: 3px solid rgba(116, 185, 255, 0.3);
+        }
+
+        .gb-reply-msg {
+            margin-bottom: 8px;
+            padding: 10px 14px;
+            background: rgba(0, 206, 201, 0.08);
+            border: 1.5px solid rgba(0, 206, 201, 0.2);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            animation: msgSlideIn 0.3s ease;
+        }
+
+        .gb-reply-msg .gb-name {
+            font-weight: bold;
+            color: var(--accent2);
+        }
+
+        .gb-reply-msg .gb-time {
+            color: #aaa;
+            font-size: 0.75rem;
+            display: block;
+            margin-top: 4px;
+        }
+
+        .gb-reply-tag {
+            color: var(--accent);
+            font-size: 0.8rem;
+            margin-right: 4px;
+        }
+
         /* 互动区两栏布局 */
         .interact-grid {
             display: grid;
@@ -2222,10 +2351,12 @@
         });
 
         // ====== 留言板功能（直接用 fetch 调 Supabase REST API） ======
+        var allMessages = [];
+
         async function loadMessages() {
             try {
-                const res = await fetch(
-                    SUPABASE_URL + "/rest/v1/guestbook?select=*&order=created_at.desc&limit=50",
+                var res = await fetch(
+                    SUPABASE_URL + "/rest/v1/guestbook?select=*&order=created_at.asc&limit=100",
                     {
                         headers: {
                             apikey: SUPABASE_ANON_KEY,
@@ -2233,32 +2364,159 @@
                         }
                     }
                 );
-                const data = await res.json();
+                var data = await res.json();
                 if (data && data.length > 0) {
-                    gbList.innerHTML = "";
-                    data.forEach(msg => {
-                        const div = document.createElement("div");
-                        div.className = "gb-msg";
-                        const time = new Date(msg.created_at).toLocaleString("zh-CN");
-                        div.innerHTML = '<span class="gb-name">' + escapeHtml(msg.name) + '</span>：' + escapeHtml(msg.message) + '<span class="gb-time">' + time + '</span>';
-                        gbList.appendChild(div);
-                    });
+                    allMessages = data.filter(function(m) { return !m.deleted; });
+                    renderMessages();
+                } else {
+                    allMessages = [];
+                    gbList.innerHTML = '<div class="gb-empty">还没有留言，快来抢沙发~ 🏸</div>';
                 }
             } catch (e) {
                 console.log("加载留言失败:", e);
             }
         }
 
+        function renderMessages() {
+            var topLevel = allMessages.filter(function(m) { return !m.parent_id; });
+            if (topLevel.length === 0) {
+                gbList.innerHTML = '<div class="gb-empty">还没有留言，快来抢沙发~ 🏸</div>';
+                return;
+            }
+            topLevel.reverse();
+            gbList.innerHTML = "";
+            topLevel.forEach(function(msg) {
+                var div = createMessageElement(msg);
+                var replies = allMessages.filter(function(m) { return m.parent_id === msg.id; });
+                if (replies.length > 0) {
+                    var replyContainer = document.createElement("div");
+                    replyContainer.className = "gb-replies";
+                    replies.forEach(function(reply) {
+                        replyContainer.appendChild(createReplyElement(reply, msg.name));
+                    });
+                    div.appendChild(replyContainer);
+                }
+                gbList.appendChild(div);
+            });
+        }
+
+        function createMessageElement(msg) {
+            var div = document.createElement("div");
+            div.className = "gb-msg";
+            var time = new Date(msg.created_at).toLocaleString("zh-CN");
+            var contentHtml = '<span class="gb-name">' + escapeHtml(msg.name) + '</span>：' + escapeHtml(msg.message) + '<span class="gb-time">' + time + '</span>';
+            contentHtml += '<div class="gb-msg-actions">';
+            contentHtml += '<button class="gb-action-btn" onclick="showReplyForm(' + msg.id + ', \'' + escapeHtml(msg.name).replace(/'/g, "\\'") + '\')">回复</button>';
+            contentHtml += '<button class="gb-action-btn delete-btn" onclick="deleteMessage(' + msg.id + ')">删除</button>';
+            contentHtml += '</div>';
+            contentHtml += '<div class="gb-reply-form" id="reply-form-' + msg.id + '">';
+            contentHtml += '<input type="text" id="reply-name-' + msg.id + '" placeholder="你的名字">';
+            contentHtml += '<textarea id="reply-msg-' + msg.id + '" placeholder="回复 ' + escapeHtml(msg.name) + '..."></textarea>';
+            contentHtml += '<div class="gb-reply-btn-row">';
+            contentHtml += '<button class="gb-reply-submit" onclick="submitReply(' + msg.id + ')">发送回复</button>';
+            contentHtml += '<button class="gb-reply-cancel" onclick="hideReplyForm(' + msg.id + ')">取消</button>';
+            contentHtml += '</div></div>';
+            div.innerHTML = contentHtml;
+            return div;
+        }
+
+        function createReplyElement(reply, parentName) {
+            var div = document.createElement("div");
+            div.className = "gb-reply-msg";
+            var time = new Date(reply.created_at).toLocaleString("zh-CN");
+            var html = '<span class="gb-reply-tag">回复 @' + escapeHtml(parentName) + '</span>';
+            html += '<span class="gb-name">' + escapeHtml(reply.name) + '</span>：' + escapeHtml(reply.message);
+            html += '<span class="gb-time">' + time + '</span>';
+            html += '<div class="gb-msg-actions">';
+            html += '<button class="gb-action-btn delete-btn" onclick="deleteMessage(' + reply.id + ')">删除</button>';
+            html += '</div>';
+            div.innerHTML = html;
+            return div;
+        }
+
+        window.showReplyForm = function(msgId, msgName) {
+            hideAllReplyForms();
+            var form = document.getElementById("reply-form-" + msgId);
+            if (form) form.classList.add("show");
+        };
+
+        window.hideReplyForm = function(msgId) {
+            var form = document.getElementById("reply-form-" + msgId);
+            if (form) form.classList.remove("show");
+        };
+
+        function hideAllReplyForms() {
+            document.querySelectorAll(".gb-reply-form.show").forEach(function(f) {
+                f.classList.remove("show");
+            });
+        }
+
+        window.submitReply = async function(parentId) {
+            var name = document.getElementById("reply-name-" + parentId).value.trim();
+            var message = document.getElementById("reply-msg-" + parentId).value.trim();
+            if (!name || !message) {
+                alert("请填写名字和回复内容哦~ 🏸");
+                return;
+            }
+            try {
+                var res = await fetch(SUPABASE_URL + "/rest/v1/guestbook", {
+                    method: "POST",
+                    headers: {
+                        apikey: SUPABASE_ANON_KEY,
+                        Authorization: "Bearer " + SUPABASE_ANON_KEY,
+                        "Content-Type": "application/json",
+                        Prefer: "return=minimal"
+                    },
+                    body: JSON.stringify({ name: name, message: message, parent_id: parentId })
+                });
+                if (!res.ok) {
+                    var errText = await res.text();
+                    alert("回复失败：" + res.status + " " + errText);
+                    return;
+                }
+                hideReplyForm(parentId);
+                loadMessages();
+            } catch (e) {
+                alert("回复失败，请稍后再试~");
+                console.log(e);
+            }
+        };
+
+        window.deleteMessage = async function(msgId) {
+            if (!confirm("确定删除这条留言吗？")) return;
+            try {
+                var res = await fetch(SUPABASE_URL + "/rest/v1/guestbook?id=eq." + msgId, {
+                    method: "PATCH",
+                    headers: {
+                        apikey: SUPABASE_ANON_KEY,
+                        Authorization: "Bearer " + SUPABASE_ANON_KEY,
+                        "Content-Type": "application/json",
+                        Prefer: "return=minimal"
+                    },
+                    body: JSON.stringify({ deleted: true })
+                });
+                if (!res.ok) {
+                    var errText = await res.text();
+                    alert("删除失败：" + res.status + " " + errText);
+                    return;
+                }
+                loadMessages();
+            } catch (e) {
+                alert("删除失败，请稍后再试~");
+                console.log(e);
+            }
+        };
+
         window.submitGuestMessage = async function() {
-            const name = document.getElementById("gb-name").value.trim();
-            const message = document.getElementById("gb-msg").value.trim();
+            var name = document.getElementById("gb-name").value.trim();
+            var message = document.getElementById("gb-msg").value.trim();
             if (!name || !message) {
                 alert("请填写名字和留言内容哦~ 🏸");
                 return;
             }
 
             try {
-                const res = await fetch(SUPABASE_URL + "/rest/v1/guestbook", {
+                var res = await fetch(SUPABASE_URL + "/rest/v1/guestbook", {
                     method: "POST",
                     headers: {
                         apikey: SUPABASE_ANON_KEY,
@@ -2270,7 +2528,7 @@
                 });
 
                 if (!res.ok) {
-                    const errText = await res.text();
+                    var errText = await res.text();
                     alert("留言失败：" + res.status + " " + errText);
                     return;
                 }
