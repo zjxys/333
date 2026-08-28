@@ -2186,7 +2186,7 @@
         const SUPABASE_ANON_KEY = "sb_publishable_I3wka1FDH4EiZuEFOyEm8A_421_fHwY";
 
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const SITE_SLUG = "zhoujian-669";
+        const SITE_SLUG = "zhoujian-333";
 
         const gbList = document.getElementById("guestbook-list");
         const likeBtn = document.getElementById("like-btn");
@@ -2198,26 +2198,12 @@
             return div.innerHTML;
         }
 
-        // ====== 点赞功能 ======
+        // ====== 点赞功能（本地存储版） ======
         let liked = localStorage.getItem("liked_" + SITE_SLUG) === "true";
+        let likeCount = parseInt(localStorage.getItem("likeCount_" + SITE_SLUG) || "0");
 
-        async function loadLikes() {
-            try {
-                const { data, error } = await supabase
-                    .from("likes")
-                    .select("count")
-                    .eq("slug", SITE_SLUG)
-                    .single();
-                if (data) {
-                    likeCountEl.textContent = data.count;
-                } else if (error && error.code === "PGRST116") {
-                    await supabase.from("likes").insert({ slug: SITE_SLUG, count: 0 });
-                    likeCountEl.textContent = "0";
-                }
-            } catch (e) {
-                console.log("加载点赞数失败:", e);
-                likeCountEl.textContent = "0";
-            }
+        function loadLikes() {
+            likeCountEl.textContent = likeCount;
             updateLikeBtn();
         }
 
@@ -2229,17 +2215,14 @@
             }
         }
 
-        likeBtn.addEventListener("click", async () => {
+        likeBtn.addEventListener("click", () => {
             if (liked) return;
             liked = true;
+            likeCount++;
             localStorage.setItem("liked_" + SITE_SLUG, "true");
+            localStorage.setItem("likeCount_" + SITE_SLUG, likeCount);
             updateLikeBtn();
-            likeCountEl.textContent = parseInt(likeCountEl.textContent) + 1;
-            try {
-                await supabase.rpc("increment_like", { slug_param: SITE_SLUG });
-            } catch (e) {
-                console.log("点赞失败:", e);
-            }
+            likeCountEl.textContent = likeCount;
         });
 
         // ====== 留言板功能 ======
@@ -2248,7 +2231,6 @@
                 const { data, error } = await supabase
                     .from("guestbook")
                     .select("*")
-                    .eq("slug", SITE_SLUG)
                     .order("created_at", { ascending: false })
                     .limit(50);
 
@@ -2281,7 +2263,7 @@
             try {
                 const { error } = await supabase
                     .from("guestbook")
-                    .insert({ slug: SITE_SLUG, name, message });
+                    .insert({ name, message });
 
                 if (error) {
                     alert("留言失败：" + error.message);
