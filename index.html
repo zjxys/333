@@ -2178,14 +2178,10 @@
     </script>
 
     <!-- 点赞 + 留言板功能（Supabase） -->
-    <script type="module">
-        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
+    <script>
         // ====== Supabase 配置 ======
         const SUPABASE_URL = "https://ljmjwqjmbpnhrwrbuxkc.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_I3wka1FDH4EiZuEFOyEm8A_421_fHwY";
-
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const SITE_SLUG = "zhoujian-333";
 
         const gbList = document.getElementById("guestbook-list");
@@ -2225,25 +2221,26 @@
             likeCountEl.textContent = likeCount;
         });
 
-        // ====== 留言板功能 ======
+        // ====== 留言板功能（直接用 fetch 调 Supabase REST API） ======
         async function loadMessages() {
             try {
-                const { data, error } = await supabase
-                    .from("guestbook")
-                    .select("*")
-                    .order("created_at", { ascending: false })
-                    .limit(50);
-
+                const res = await fetch(
+                    SUPABASE_URL + "/rest/v1/guestbook?select=*&order=created_at.desc&limit=50",
+                    {
+                        headers: {
+                            apikey: SUPABASE_ANON_KEY,
+                            Authorization: "Bearer " + SUPABASE_ANON_KEY
+                        }
+                    }
+                );
+                const data = await res.json();
                 if (data && data.length > 0) {
                     gbList.innerHTML = "";
                     data.forEach(msg => {
                         const div = document.createElement("div");
                         div.className = "gb-msg";
                         const time = new Date(msg.created_at).toLocaleString("zh-CN");
-                        div.innerHTML = `
-                            <span class="gb-name">${escapeHtml(msg.name)}</span>：${escapeHtml(msg.message)}
-                            <span class="gb-time">${time}</span>
-                        `;
+                        div.innerHTML = '<span class="gb-name">' + escapeHtml(msg.name) + '</span>：' + escapeHtml(msg.message) + '<span class="gb-time">' + time + '</span>';
                         gbList.appendChild(div);
                     });
                 }
@@ -2261,12 +2258,20 @@
             }
 
             try {
-                const { error } = await supabase
-                    .from("guestbook")
-                    .insert({ name, message });
+                const res = await fetch(SUPABASE_URL + "/rest/v1/guestbook", {
+                    method: "POST",
+                    headers: {
+                        apikey: SUPABASE_ANON_KEY,
+                        Authorization: "Bearer " + SUPABASE_ANON_KEY,
+                        "Content-Type": "application/json",
+                        Prefer: "return=minimal"
+                    },
+                    body: JSON.stringify({ name: name, message: message })
+                });
 
-                if (error) {
-                    alert("留言失败：" + error.message);
+                if (!res.ok) {
+                    const errText = await res.text();
+                    alert("留言失败：" + res.status + " " + errText);
                     return;
                 }
 
