@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>功能中心 - 羽球人的世界</title>
+    <style>
+        @font-face {
+            font-family: 'Outfit';
+            src: url('./_shared/fonts/Outfit-Regular.ttf') format('truetype');
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: 'Outfit';
+            src: url('./_shared/fonts/Outfit-Bold.ttf') format('truetype');
+            font-weight: 700;
+        }
+
+        :root {
+            --bg: #e0f4ff;
+            --bg2: rgba(255, 255, 255, 0.85);
+            --ink: #2d3436;
+            --muted: #636e72;
+            --rule: rgba(116, 185, 255, 0.3);
+            --accent: #74b9ff;
+            --accent2: #0984e3;
+            --accent3: #00cec9;
+            --accent4: #fdcb6e;
+            --accent5: #fd79a8;
+            --accent6: #55efc4;
+            --card-border: #74b9ff;
+            --shadow-cartoon: 4px 4px 0px #2d3436;
+            --shadow-cartoon-lg: 6px 6px 0px #2d3436;
+            --font-xingkai: "STXingkai", "华文行楷", "KaiTi", "楷体", "Kaiti SC", "楷体_GB2312", "STKaiti", "华文楷体", serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-xingkai);
+            background: var(--bg);
+            color: var(--ink);
+            line-height: 2;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(ellipse at top left, rgba(116, 185, 255, 0.15), transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(0, 206, 201, 0.15), transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* 导航栏 */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid var(--rule);
+            box-shadow: 0 2px 20px rgba(116, 185, 255, 0.15);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent2);
+        }
+
+        .logo a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--ink);
+            font-size: 1rem;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent2);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent2);
+            transition: width 0.2s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* 页面标题 */
+        .page-header {
+            text-align: center;
+            padding: 60px 20px 40px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: var(--ink);
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: var(--muted);
+            font-size: 1.2rem;
+        }
+
+        /* 功能区域 */
+        .features-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: var(--bg2);
+            border: 2px solid var(--card-border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow-cartoon);
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-desc {
+            color: var(--muted);
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        /* OCR 区域 */
+        .ocr-upload-area {
+            border: 3px dashed var(--accent);
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(116, 185, 255, 0.05);
+        }
+
+        .ocr-upload-area:hover {
+            border-color: var(--accent2);
+            background: rgba(116, 185, 255, 0.12);
+        }
+
+        .ocr-upload-area.dragover {
+            border-color: var(--accent3);
+            background: rgba(0, 206, 201, 0.12);
+            transform: scale(1.01);
+        }
+
+        .ocr-upload-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .ocr-upload-text {
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+
+        .ocr-preview {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .ocr-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 12px;
+            border: 2px solid var(--rule);
+        }
+
+        .ocr-progress {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .ocr-progress.show {
+            display: block;
+        }
+
+        .ocr-progress-bar {
+            width: 100%;
+            height: 24px;
+            background: rgba(116, 185, 255, 0.15);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ocr-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent3));
+            border-radius: 12px;
+            transition: width 0.3s;
+            width: 0%;
+        }
+
+        .ocr-progress-text {
+            text-align: center;
+            margin-top: 8px;
+            color: var(--accent2);
+            font-size: 0.95rem;
+        }
+
+        .ocr-result {
+            margin-top: 20px;
+        }
+
+        .ocr-result-label {
+            font-weight: bold;
+            color: var(--accent2);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ocr-result-text {
+            background: rgba(116, 185, 255, 0.08);
+            border: 2px solid var(--rule);
+            border-radius: 12px;
+            padding: 16px 20px;
+            min-height: 80px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .ocr-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .ocr-action-btn {
+            padding: 8px 20px;
+            border: 2px solid var(--rule);
+            border-radius: 10px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--ink);
+            transition: all 0.2s;
+            font-family: var(--font-xingkai);
+        }
+
+        .ocr-action-btn:hover {
+            border-color: var(--accent2);
+            color: var(--accent2);
+            transform: translate(-1px, -1px);
+            box-shadow: 2px 2px 0px #2d3436;
+        }
+
+        /* 语音转文字区域 */
+        .voice-section {
+            text-align: center;
+        }
+
+        .voice-mic-btn {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: none;
+            font-size: 2.5rem;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #fff;
+            box-shadow: var(--shadow-cartoon);
+            transition: all 0.2s;
+            margin: 20px 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-mic-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #2d3436;
+        }
+
+        .voice-mic-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #2d3436;
+        }
+
+        .voice-mic-btn.recording {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            animation: pulse-record 1.5s infinite;
+        }
+
+        @keyframes pulse-record {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4), var(--shadow-cartoon); }
+            50% { box-shadow: 0 0 0 15px rgba(231, 76, 60, 0), var(--shadow-cartoon); }
+        }
+
+        .voice-status {
+            color: var(--muted);
+            font-size: 1rem;
+            margin-bottom: 10px;
+            min-height: 1.5rem;
+        }
+
+        .voice-result {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .voice-result-label {
+            font-weight: bold;
+            color: var(--accent2);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .voice-result-text {
+            background: rgba(0, 206, 201, 0.08);
+            border: 2px solid var(--rule);
+            border-radius: 12px;
+            padding: 16px 20px;
+            min-height: 80px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .voice-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .voice-action-btn {
+            padding: 8px 20px;
+            border: 2px solid var(--rule);
+            border-radius: 10px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--ink);
+            transition: all 0.2s;
+            font-family: var(--font-xingkai);
+        }
+
+        .voice-action-btn:hover {
+            border-color: var(--accent2);
+            color: var(--accent2);
+            transform: translate(-1px, -1px);
+            box-shadow: 2px 2px 0px #2d3436;
+        }
+
+        .voice-interim {
+            color: var(--muted);
+            font-style: italic;
+            margin-top: 8px;
+            font-size: 0.95rem;
+        }
+
+        /* 提示框 */
+        .notice {
+            background: rgba(253, 203, 110, 0.15);
+            border: 1.5px solid var(--accent4);
+            border-radius: 10px;
+            padding: 10px 16px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 12px;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+
+            .nav-links a {
+                font-size: 0.85rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .feature-card {
+                padding: 20px;
+            }
+
+            .voice-mic-btn {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo"><a href="index.html">🏸 羽球人的世界</a></div>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="index.html#about">关于我</a></li>
+                <li><a href="index.html#guestbook">留言板</a></li>
+                <li><a href="features.html">功能</a></li>
+                <li><a href="index.html#contact">联系</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+        <h1>🛠️ 功能中心</h1>
+        <p>图片转文字 · 语音转文字</p>
+    </div>
+
+    <!-- 功能区域 -->
+    <div class="features-container">
+
+        <!-- 图片转文字 -->
+        <div class="feature-card">
+            <h2 class="feature-title">🖼️ 图片转文字</h2>
+            <p class="feature-desc">上传一张包含文字的图片，自动识别并提取文字内容。支持中英文识别。</p>
+            <div class="notice">💡 基于 Tesseract.js 引擎，纯前端运行，图片不会上传到服务器，保护隐私。</div>
+
+            <div class="ocr-upload-area" id="ocr-upload-area" onclick="document.getElementById('ocr-file-input').click()">
+                <div class="ocr-upload-icon">📁</div>
+                <div class="ocr-upload-text">点击选择图片，或拖拽图片到这里</div>
+                <div style="margin-top:6px;font-size:0.8rem;color:#999">支持 PNG / JPG / JPEG / BMP / WebP</div>
+            </div>
+            <input type="file" id="ocr-file-input" accept="image/*" style="display:none">
+
+            <div class="ocr-preview" id="ocr-preview" style="display:none">
+                <img id="ocr-preview-img" alt="预览图">
+            </div>
+
+            <div class="ocr-progress" id="ocr-progress">
+                <div class="ocr-progress-bar">
+                    <div class="ocr-progress-fill" id="ocr-progress-fill"></div>
+                </div>
+                <div class="ocr-progress-text" id="ocr-progress-text">正在识别中...</div>
+            </div>
+
+            <div class="ocr-result" id="ocr-result" style="display:none">
+                <div class="ocr-result-label">📝 识别结果</div>
+                <div class="ocr-result-text" id="ocr-result-text"></div>
+                <div class="ocr-actions">
+                    <button class="ocr-action-btn" onclick="copyOcrResult()">📋 复制文字</button>
+                    <button class="ocr-action-btn" onclick="clearOcr()">🔄 重新识别</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 语音转文字 -->
+        <div class="feature-card voice-section">
+            <h2 class="feature-title">🎤 语音转文字</h2>
+            <p class="feature-desc">点击麦克风按钮开始说话，系统会自动将语音转换为文字。支持中文识别。</p>
+            <div class="notice">💡 基于 Web Speech API，建议使用 Chrome 或 Edge 浏览器。需要允许麦克风权限。</div>
+
+            <button class="voice-mic-btn" id="voice-mic-btn" onclick="toggleVoice()">🎤</button>
+            <div class="voice-status" id="voice-status">点击麦克风开始录音</div>
+            <div class="voice-interim" id="voice-interim"></div>
+
+            <div class="voice-result" id="voice-result" style="display:none">
+                <div class="voice-result-label">📝 转换结果</div>
+                <div class="voice-result-text" id="voice-result-text"></div>
+                <div class="voice-actions">
+                    <button class="voice-action-btn" onclick="copyVoiceResult()">📋 复制文字</button>
+                    <button class="voice-action-btn" onclick="clearVoice()">🔄 清空重录</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Tesseract.js -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+    <script>
+        // ====== 图片转文字（OCR）======
+        var ocrFileInput = document.getElementById("ocr-file-input");
+        var ocrUploadArea = document.getElementById("ocr-upload-area");
+        var ocrPreview = document.getElementById("ocr-preview");
+        var ocrPreviewImg = document.getElementById("ocr-preview-img");
+        var ocrProgress = document.getElementById("ocr-progress");
+        var ocrProgressFill = document.getElementById("ocr-progress-fill");
+        var ocrProgressText = document.getElementById("ocr-progress-text");
+        var ocrResult = document.getElementById("ocr-result");
+        var ocrResultText = document.getElementById("ocr-result-text");
+
+        ocrFileInput.addEventListener("change", function(e) {
+            if (e.target.files[0]) handleImage(e.target.files[0]);
+        });
+
+        ocrUploadArea.addEventListener("dragover", function(e) {
+            e.preventDefault();
+            ocrUploadArea.classList.add("dragover");
+        });
+
+        ocrUploadArea.addEventListener("dragleave", function() {
+            ocrUploadArea.classList.remove("dragover");
+        });
+
+        ocrUploadArea.addEventListener("drop", function(e) {
+            e.preventDefault();
+            ocrUploadArea.classList.remove("dragover");
+            if (e.dataTransfer.files[0]) handleImage(e.dataTransfer.files[0]);
+        });
+
+        async function handleImage(file) {
+            if (!file.type.startsWith("image/")) {
+                alert("请上传图片文件！");
+                return;
+            }
+
+            // 显示预览
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                ocrPreviewImg.src = e.target.result;
+                ocrPreview.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+
+            // 隐藏旧结果，显示进度
+            ocrResult.style.display = "none";
+            ocrProgress.classList.add("show");
+            ocrProgressFill.style.width = "0%";
+            ocrProgressText.textContent = "正在加载识别引擎...";
+
+            try {
+                var worker = await Tesseract.createWorker("chi_sim+eng", 1, {
+                    logger: function(m) {
+                        if (m.status === "recognizing text") {
+                            var pct = Math.round(m.progress * 100);
+                            ocrProgressFill.style.width = pct + "%";
+                            ocrProgressText.textContent = "正在识别文字... " + pct + "%";
+                        }
+                    }
+                });
+
+                ocrProgressText.textContent = "正在识别文字...";
+
+                var result = await worker.recognize(file);
+                await worker.terminate();
+
+                var text = result.data.text.trim();
+
+                ocrProgress.classList.remove("show");
+                ocrResult.style.display = "block";
+                ocrResultText.textContent = text || "（未识别到文字，请尝试更清晰的图片）";
+
+            } catch (e) {
+                ocrProgress.classList.remove("show");
+                alert("识别失败：" + e.message);
+                console.log(e);
+            }
+        }
+
+        window.copyOcrResult = function() {
+            var text = ocrResultText.textContent;
+            if (!text) return;
+            navigator.clipboard.writeText(text).then(function() {
+                alert("已复制到剪贴板！");
+            }).catch(function() {
+                var ta = document.createElement("textarea");
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand("copy");
+                document.body.removeChild(ta);
+                alert("已复制到剪贴板！");
+            });
+        };
+
+        window.clearOcr = function() {
+            ocrPreview.style.display = "none";
+            ocrResult.style.display = "none";
+            ocrProgress.classList.remove("show");
+            ocrFileInput.value = "";
+        };
+
+        // ====== 语音转文字 ======
+        var voiceMicBtn = document.getElementById("voice-mic-btn");
+        var voiceStatus = document.getElementById("voice-status");
+        var voiceInterim = document.getElementById("voice-interim");
+        var voiceResult = document.getElementById("voice-result");
+        var voiceResultText = document.getElementById("voice-result-text");
+
+        var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        var recognition = null;
+        var isRecording = false;
+        var finalText = "";
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = "zh-CN";
+            recognition.continuous = true;
+            recognition.interimResults = true;
+
+            recognition.onstart = function() {
+                isRecording = true;
+                voiceMicBtn.classList.add("recording");
+                voiceMicBtn.textContent = "⏹";
+                voiceStatus.textContent = "正在录音... 点击按钮停止";
+            };
+
+            recognition.onend = function() {
+                isRecording = false;
+                voiceMicBtn.classList.remove("recording");
+                voiceMicBtn.textContent = "🎤";
+                voiceStatus.textContent = "录音已结束";
+                voiceInterim.textContent = "";
+            };
+
+            recognition.onerror = function(e) {
+                isRecording = false;
+                voiceMicBtn.classList.remove("recording");
+                voiceMicBtn.textContent = "🎤";
+                if (e.error === "not-allowed") {
+                    voiceStatus.textContent = "需要允许麦克风权限才能使用";
+                } else if (e.error === "no-speech") {
+                    voiceStatus.textContent = "没有检测到语音，请再试一次";
+                } else {
+                    voiceStatus.textContent = "发生错误：" + e.error;
+                }
+            };
+
+            recognition.onresult = function(e) {
+                var interim = "";
+                for (var i = 0; i < e.results.length; i++) {
+                    if (e.results[i].isFinal) {
+                        finalText += e.results[i][0].transcript;
+                    } else {
+                        interim += e.results[i][0].transcript;
+                    }
+                }
+                voiceInterim.textContent = interim ? ("正在说: " + interim) : "";
+                if (finalText) {
+                    voiceResult.style.display = "block";
+                    voiceResultText.textContent = finalText;
+                }
+            };
+        } else {
+            voiceStatus.textContent = "当前浏览器不支持语音识别，请使用 Chrome 或 Edge";
+            voiceMicBtn.disabled = true;
+            voiceMicBtn.style.opacity = "0.5";
+            voiceMicBtn.style.cursor = "not-allowed";
+        }
+
+        window.toggleVoice = function() {
+            if (!recognition) return;
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                finalText = finalText || "";
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+        };
+
+        window.copyVoiceResult = function() {
+            var text = voiceResultText.textContent;
+            if (!text) return;
+            navigator.clipboard.writeText(text).then(function() {
+                alert("已复制到剪贴板！");
+            }).catch(function() {
+                var ta = document.createElement("textarea");
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand("copy");
+                document.body.removeChild(ta);
+                alert("已复制到剪贴板！");
+            });
+        };
+
+        window.clearVoice = function() {
+            finalText = "";
+            voiceResult.style.display = "none";
+            voiceResultText.textContent = "";
+            voiceInterim.textContent = "";
+            voiceStatus.textContent = "点击麦克风开始录音";
+        };
+    </script>
+
+
+</body></html>
