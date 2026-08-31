@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习工作流 - 羽球人的世界</title>
+    <style>
+        :root {
+            --bg: #e0f4ff;
+            --bg2: rgba(255, 255, 255, 0.85);
+            --ink: #2d3436;
+            --muted: #636e72;
+            --rule: rgba(116, 185, 255, 0.3);
+            --accent: #74b9ff;
+            --accent2: #0984e3;
+            --accent3: #00cec9;
+            --accent4: #fdcb6e;
+            --accent5: #fd79a8;
+            --accent6: #55efc4;
+            --card-border: #74b9ff;
+            --shadow-cartoon: 4px 4px 0px #2d3436;
+            --shadow-cartoon-lg: 6px 6px 0px #2d3436;
+            --font-xingkai: "STXingkai", "华文行楷", "KaiTi", "楷体", "Kaiti SC", "楷体_GB2312", "STKaiti", "华文楷体", serif;
+            --free-color: #55efc4;
+            --course-color: #74b9ff;
+            --study-color: #fdcb6e;
+            --reminder-color: #fd79a8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-xingkai);
+            color: var(--ink);
+            line-height: 2;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-size: 1.1rem;
+        }
+
+        .animated-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+            background: linear-gradient(-45deg, #e0f4ff, #dfe6e9, #a8d8ea, #d0eefc);
+            background-size: 400% 400%; animation: gradientBG 15s ease infinite;
+        }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .glow-orb { position: fixed; border-radius: 50%; filter: blur(40px); opacity: 0.4; animation: orbFloat 8s ease-in-out infinite; pointer-events: none; z-index: -1; }
+        .glow-orb.orb1 { width: 250px; height: 250px; background: var(--accent); top: 10%; left: 10%; }
+        .glow-orb.orb2 { width: 200px; height: 200px; background: var(--accent3); bottom: 20%; right: 15%; animation-delay: -2s; }
+        @keyframes orbFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 33% { transform: translate(30px, -30px) scale(1.1); } 66% { transform: translate(-20px, 20px) scale(0.9); } }
+
+        .floating-shuttlecocks { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: -1; }
+        .shuttlecock { position: absolute; font-size: 2rem; opacity: 0.25; animation: shuttleFloat 15s ease-in-out infinite; }
+        .shuttlecock:nth-child(1) { top: 20%; left: 8%; }
+        .shuttlecock:nth-child(2) { top: 60%; right: 12%; animation-delay: -3s; }
+        .shuttlecock:nth-child(3) { top: 80%; left: 15%; animation-delay: -6s; }
+        @keyframes shuttleFloat { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-40px) rotate(15deg); } }
+
+        nav { position: sticky; top: 0; z-index: 1000; padding: 1rem 2rem; backdrop-filter: blur(20px); background: rgba(255, 255, 255, 0.9); border-bottom: 3px solid var(--accent); }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--accent2); text-shadow: 2px 2px 0 rgba(116, 185, 255, 0.3); }
+        .logo a { text-decoration: none; color: inherit; }
+        .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+        .nav-links a { color: var(--muted); text-decoration: none; position: relative; transition: all 0.3s ease; font-weight: 600; padding: 0.3rem 0.8rem; border-radius: 20px; }
+        .nav-links a:hover { color: #fff; background: var(--accent); transform: translateY(-2px); }
+
+        .page-header { text-align: center; padding: 60px 20px 30px; position: relative; z-index: 1; }
+        .page-header h1 { font-size: 2.5rem; text-shadow: 3px 3px 0 rgba(116, 185, 255, 0.3); margin-bottom: 8px; }
+        .page-header p { color: var(--muted); font-size: 1.2rem; }
+
+        .steps-bar { max-width: 1000px; margin: 0 auto 30px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; padding: 0 20px; }
+        .step-item { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #fff; border: 2px solid var(--accent); border-radius: 30px; font-size: 0.95rem; box-shadow: 2px 2px 0 #2d3436; cursor: pointer; transition: all 0.2s; }
+        .step-item:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 #2d3436; }
+        .step-item.active { background: var(--accent); color: #fff; }
+        .step-num { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent2); color: #fff; font-size: 0.8rem; font-weight: bold; }
+        .step-item.active .step-num { background: #fff; color: var(--accent2); }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px 60px; display: flex; flex-direction: column; gap: 30px; position: relative; z-index: 1; }
+
+        .card { background: var(--bg2); border: 3px solid var(--card-border); border-radius: 20px; padding: 30px; box-shadow: var(--shadow-cartoon-lg); backdrop-filter: blur(10px); }
+        .card-title { font-size: 1.5rem; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--accent2); }
+
+        .notice { background: rgba(253, 203, 110, 0.15); border: 2px solid var(--accent4); border-radius: 10px; padding: 10px 16px; margin-bottom: 16px; font-size: 0.9rem; color: var(--muted); }
+
+        /* OCR 上传区 */
+        .upload-area { border: 3px dashed var(--accent); border-radius: 16px; padding: 40px 20px; text-align: center; cursor: pointer; transition: all 0.3s; background: rgba(116, 185, 255, 0.05); }
+        .upload-area:hover { border-color: var(--accent2); background: rgba(116, 185, 255, 0.12); }
+        .upload-area.dragover { border-color: var(--accent3); background: rgba(0, 206, 201, 0.12); }
+        .upload-icon { font-size: 3rem; margin-bottom: 8px; }
+        .upload-text { color: var(--muted); font-size: 1.1rem; }
+
+        .preview-img { max-width: 100%; max-height: 300px; border-radius: 12px; border: 3px solid var(--card-border); box-shadow: var(--shadow-cartoon); margin-top: 16px; }
+
+        .progress-bar { width: 100%; height: 24px; background: rgba(116, 185, 255, 0.15); border: 3px solid var(--accent); border-radius: 12px; overflow: hidden; margin-top: 16px; display: none; }
+        .progress-bar.show { display: block; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); border-radius: 10px; transition: width 0.3s; width: 0%; }
+        .progress-text { text-align: center; margin-top: 6px; color: var(--accent2); font-size: 0.9rem; }
+
+        textarea { width: 100%; min-height: 120px; padding: 12px 16px; border: 3px solid var(--rule); border-radius: 12px; font-size: 1rem; font-family: var(--font-xingkai); resize: vertical; outline: none; line-height: 1.8; margin-top: 12px; }
+        textarea:focus { border-color: var(--accent2); }
+
+        .btn { padding: 10px 24px; border: 3px solid #2d3436; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: var(--font-xingkai); transition: all 0.2s; }
+        .btn-primary { background: var(--accent); color: #fff; box-shadow: var(--shadow-cartoon); }
+        .btn-primary:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #2d3436; }
+        .btn-primary:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #2d3436; }
+        .btn-secondary { background: #fff; color: var(--accent2); border-color: var(--accent2); box-shadow: var(--shadow-cartoon); }
+        .btn-secondary:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #2d3436; background: var(--accent); color: #fff; }
+        .btn-danger { background: #fff; color: #e74c3c; border-color: #e74c3c; box-shadow: var(--shadow-cartoon); }
+        .btn-danger:hover { background: #e74c3c; color: #fff; }
+        .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+        /* 周课表网格 */
+        .schedule-grid { overflow-x: auto; margin-top: 16px; }
+        .schedule-table { border-collapse: collapse; min-width: 700px; width: 100%; }
+        .schedule-table th, .schedule-table td { border: 2px solid var(--rule); padding: 8px; text-align: center; font-size: 0.9rem; }
+        .schedule-table th { background: var(--accent); color: #fff; font-weight: 700; position: sticky; top: 0; }
+        .schedule-table td { background: #fff; min-height: 50px; height: 50px; }
+        .schedule-table td.free { background: rgba(85, 239, 196, 0.15); }
+        .schedule-table td.course { background: rgba(116, 185, 255, 0.2); }
+        .schedule-table td.study { background: rgba(253, 203, 110, 0.25); }
+        .schedule-table td.reminder { background: rgba(253, 121, 168, 0.2); }
+        .schedule-table td .cell-course { font-weight: 700; color: var(--accent2); font-size: 0.85rem; }
+        .schedule-table td .cell-study { font-weight: 700; color: #e17055; font-size: 0.85rem; }
+        .schedule-table td .cell-time { font-size: 0.75rem; color: var(--muted); }
+        .schedule-table td .cell-reminder { font-weight: 700; color: #e84393; font-size: 0.8rem; }
+
+        .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; justify-content: center; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
+        .legend-color { width: 16px; height: 16px; border-radius: 4px; border: 2px solid #fff; }
+        .legend-color.free { background: rgba(85, 239, 196, 0.5); }
+        .legend-color.course { background: rgba(116, 185, 255, 0.5); }
+        .legend-color.study { background: rgba(253, 203, 110, 0.5); }
+        .legend-color.reminder { background: rgba(253, 121, 168, 0.5); }
+
+        /* 学习目标 */
+        .goal-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+        .form-group { flex: 1; min-width: 200px; }
+        .form-group label { display: block; font-size: 0.9rem; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+        .form-group input, .form-group select { width: 100%; padding: 10px 14px; border: 3px solid var(--rule); border-radius: 10px; font-size: 1rem; font-family: var(--font-xingkai); outline: none; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--accent2); }
+
+        .goal-list { margin-top: 16px; }
+        .goal-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(253, 203, 110, 0.1); border: 2px solid rgba(253, 203, 110, 0.3); border-radius: 12px; margin-bottom: 8px; }
+        .goal-info { display: flex; flex-direction: column; gap: 2px; }
+        .goal-name { font-weight: 700; color: var(--accent2); font-size: 1.05rem; }
+        .goal-meta { font-size: 0.85rem; color: var(--muted); }
+        .goal-delete { padding: 4px 10px; border: 2px solid #e74c3c; border-radius: 8px; background: #fff; color: #e74c3c; cursor: pointer; font-size: 0.85rem; font-family: var(--font-xingkai); }
+        .goal-delete:hover { background: #e74c3c; color: #fff; }
+
+        /* 提醒任务列表 */
+        .task-list { margin-top: 16px; }
+        .task-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: rgba(253, 121, 168, 0.1); border: 2px solid rgba(253, 121, 168, 0.3); border-radius: 12px; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+        .task-info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 200px; }
+        .task-title { font-weight: 700; color: #e84393; font-size: 1.05rem; }
+        .task-meta { font-size: 0.85rem; color: var(--muted); }
+        .task-actions { display: flex; gap: 6px; }
+        .task-btn { padding: 4px 12px; border: 2px solid var(--rule); border-radius: 8px; background: #fff; cursor: pointer; font-size: 0.8rem; font-family: var(--font-xingkai); }
+        .task-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+        .task-btn.delete:hover { border-color: #e74c3c; color: #e74c3c; background: #e74c3c; color: #fff; }
+
+        .empty-tip { text-align: center; color: #bbb; padding: 30px; font-size: 0.95rem; }
+
+        /* 统计卡片 */
+        .stats-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px; }
+        .stat-card { flex: 1; min-width: 140px; text-align: center; padding: 20px; background: #fff; border: 3px solid var(--accent); border-radius: 16px; box-shadow: var(--shadow-cartoon); }
+        .stat-num { font-size: 2rem; font-weight: 700; color: var(--accent2); }
+        .stat-label { font-size: 0.9rem; color: var(--muted); margin-top: 4px; }
+
+        .back-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 24px; background: #fff; color: var(--accent2); border: 3px solid var(--accent2); border-radius: 50px; text-decoration: none; font-size: 1rem; font-weight: 600; font-family: var(--font-xingkai); box-shadow: var(--shadow-cartoon); transition: all 0.2s; }
+        .back-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #2d3436; background: var(--accent); color: #fff; }
+
+        /* 汉堡菜单 */
+        .menu-toggle { display: none; flex-direction: column; justify-content: space-around; width: 36px; height: 30px; background: transparent; border: none; cursor: pointer; padding: 0; z-index: 1001; }
+        .menu-toggle span { display: block; width: 100%; height: 4px; background: var(--accent2); border-radius: 2px; transition: all 0.3s ease; }
+        .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(8px, 8px); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; transform: translateX(-20px); }
+        .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -7px); }
+        .mobile-menu-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; opacity: 0; transition: opacity 0.3s ease; }
+        .mobile-menu-overlay.active { display: block; opacity: 1; }
+
+        @media (max-width: 768px) {
+            body { font-size: 1rem; }
+            .menu-toggle { display: flex; }
+            .nav-links { position: fixed; top: 0; right: -100%; width: 75%; max-width: 300px; height: 100vh; background: #fff; flex-direction: column; justify-content: flex-start; padding: 80px 30px 30px; gap: 0.5rem; transition: right 0.3s ease; z-index: 1000; box-shadow: -5px 0 20px rgba(0,0,0,0.1); overflow-y: auto; }
+            .nav-links.active { right: 0; }
+            .nav-links li { width: 100%; }
+            .nav-links a { display: block; width: 100%; padding: 12px 16px; font-size: 1.1rem; border-radius: 12px; }
+            .nav-links a::after { display: none; }
+            .cursor-glow, .glow-orb, .floating-shuttlecocks { display: none; }
+            .page-header h1 { font-size: 1.8rem; }
+            .card { padding: 20px; }
+            .schedule-table { font-size: 0.75rem; }
+            .schedule-table th, .schedule-table td { padding: 6px 4px; }
+            .steps-bar { gap: 6px; }
+            .step-item { padding: 6px 12px; font-size: 0.8rem; }
+            .goal-form { flex-direction: column; }
+            .form-group { min-width: 100%; }
+            .stats-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="glow-orb orb1"></div>
+    <div class="glow-orb orb2"></div>
+    <div class="floating-shuttlecocks">
+        <span class="shuttlecock">🏸</span>
+        <span class="shuttlecock">🏸</span>
+        <span class="shuttlecock">🏸</span>
+    </div>
+
+    <!-- 导航栏 -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo"><a href="index.html">🏸 羽球人的世界</a></div>
+            <button class="menu-toggle" id="menuToggle" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html" onclick="closeMobileMenu()">首页</a></li>
+                <li><a href="index.html#about" onclick="closeMobileMenu()">关于我</a></li>
+                <li><a href="index.html#guestbook" onclick="closeMobileMenu()">留言板</a></li>
+                <li><a href="features.html" onclick="closeMobileMenu()">功能</a></li>
+                <li><a href="scheduler.html" onclick="closeMobileMenu()">工作流</a></li>
+                <li><a href="index.html#contact" onclick="closeMobileMenu()">联系</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+        <h1>🏸 学习工作流</h1>
+        <p>课表识别 → 空闲分析 → 自动排课 → 手机提醒</p>
+    </div>
+
+    <!-- 步骤导航 -->
+    <div class="steps-bar">
+        <div class="step-item active" onclick="scrollToStep('step1')"><span class="step-num">1</span> 导入课表</div>
+        <div class="step-item" onclick="scrollToStep('step2')"><span class="step-num">2</span> 空闲时间</div>
+        <div class="step-item" onclick="scrollToStep('step3')"><span class="step-num">3</span> 自动排课</div>
+        <div class="step-item" onclick="scrollToStep('step4')"><span class="step-num">4</span> 提醒设置</div>
+    </div>
+
+    <div class="container">
+        <!-- 步骤1: 导入课表 -->
+        <div class="card" id="step1">
+            <h2 class="card-title">📷 步骤一：导入课表</h2>
+            <div class="notice">💡 上传一周课表图片，系统会自动识别课程信息。也可以手动输入课程。</div>
+
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('scheduleFileInput').click()">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">点击或拖拽课表图片到这里</div>
+                <div style="margin-top:6px;font-size:0.8rem;color:#999">支持 PNG / JPG / JPEG</div>
+            </div>
+            <input type="file" id="scheduleFileInput" accept="image/*" style="display:none">
+
+            <div style="text-align:center;"><img id="previewImg" class="preview-img" style="display:none" alt="预览"></div>
+
+            <div class="progress-bar" id="ocrProgress">
+                <div class="progress-fill" id="ocrProgressFill"></div>
+            </div>
+            <div class="progress-text" id="ocrProgressText" style="display:none"></div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="startOCR()">🔍 开始识别</button>
+                <button class="btn btn-secondary" onclick="showManualInput()">✍️ 手动输入</button>
+            </div>
+
+            <div id="manualInputArea" style="display:none">
+                <div class="notice" style="margin-top:14px">💡 每行输入一条课程，格式：星期几 开始时间-结束时间 课程名。例如：周一 08:00-09:40 高等数学</div>
+                <textarea id="manualScheduleInput" placeholder="周一 08:00-09:40 高等数学&#10;周一 10:00-11:40 大学英语&#10;周二 14:00-15:40 数据结构&#10;..."></textarea>
+                <div class="btn-row">
+                    <button class="btn btn-primary" onclick="parseManualSchedule()">✅ 确认课表</button>
+                </div>
+            </div>
+
+            <div id="ocrResultArea" style="display:none">
+                <div class="notice" style="margin-top:14px">✅ 识别完成！请检查下方文字，如有错误可直接修改，然后点击「确认课表」</div>
+                <textarea id="ocrResultText" placeholder="识别结果会显示在这里..."></textarea>
+                <div class="btn-row">
+                    <button class="btn btn-primary" onclick="parseOCRResult()">✅ 确认课表</button>
+                    <button class="btn btn-secondary" onclick="reRunOCR()">🔄 重新识别</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤2: 空闲时间分析 -->
+        <div class="card" id="step2">
+            <h2 class="card-title">📅 步骤二：空闲时间分析</h2>
+            <div id="scheduleEmpty" class="empty-tip">请先在步骤一导入课表</div>
+            <div id="scheduleContent" style="display:none">
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-color course"></div> 课程</div>
+                    <div class="legend-item"><div class="legend-color free"></div> 空闲</div>
+                    <div class="legend-item"><div class="legend-color study"></div> 学习计划</div>
+                    <div class="legend-item"><div class="legend-color reminder"></div> 提醒任务</div>
+                </div>
+                <div class="stats-row" id="scheduleStats"></div>
+                <div class="schedule-grid" id="scheduleGrid"></div>
+            </div>
+        </div>
+
+        <!-- 步骤3: 自动排课 -->
+        <div class="card" id="step3">
+            <h2 class="card-title">📚 步骤三：学习计划</h2>
+            <div class="notice">💡 添加你想学习的内容，系统会自动安排到空闲时间段。</div>
+
+            <div class="goal-form">
+                <div class="form-group">
+                    <label>学习目标</label>
+                    <input type="text" id="goalName" placeholder="例如：SolidWorks">
+                </div>
+                <div class="form-group" style="min-width:120px;max-width:150px">
+                    <label>每日时长(小时)</label>
+                    <input type="number" id="goalHours" value="2" min="0.5" max="8" step="0.5">
+                </div>
+                <div class="form-group" style="min-width:100px;max-width:130px">
+                    <label>优先级</label>
+                    <select id="goalPriority">
+                        <option value="1">高</option>
+                        <option value="2">中</option>
+                        <option value="3">低</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="addGoal()" style="align-self:flex-end">➕ 添加</button>
+            </div>
+
+            <div class="goal-list" id="goalList">
+                <div class="empty-tip">还没有学习目标，添加一个吧~</div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="autoSchedule()">🤖 自动安排学习时间</button>
+                <button class="btn btn-secondary" onclick="clearStudySchedule()">🗑️ 清除安排</button>
+            </div>
+        </div>
+
+        <!-- 步骤4: 提醒设置 -->
+        <div class="card" id="step4">
+            <h2 class="card-title">⏰ 步骤四：提醒设置</h2>
+            <div class="notice">💡 浏览器通知：打开页面时自动提醒。飞书消息：每天早上自动发消息到手机（需设置定时任务）。</div>
+
+            <div class="goal-form" style="margin-bottom:16px">
+                <div class="form-group">
+                    <label>任务名称</label>
+                    <input type="text" id="taskName" placeholder="例如：完成SolidWorks作业">
+                </div>
+                <div class="form-group" style="min-width:140px;max-width:180px">
+                    <label>日期时间</label>
+                    <input type="datetime-local" id="taskTime">
+                </div>
+                <button class="btn btn-primary" onclick="addTask()" style="align-self:flex-end">⏰ 添加提醒</button>
+            </div>
+
+            <div class="btn-row" style="margin-top:0">
+                <button class="btn btn-secondary" onclick="enableBrowserNotifications()">🔔 开启浏览器通知</button>
+                <button class="btn btn-secondary" onclick="testNotification()">📱 测试通知</button>
+            </div>
+
+            <div class="task-list" id="taskList">
+                <div class="empty-tip">还没有提醒任务，添加一个吧~</div>
+            </div>
+        </div>
+
+        <!-- 返回首页 -->
+        <div style="text-align:center">
+            <a href="index.html" class="back-btn">🏸 返回首页</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script>
+        // ====== 移动端菜单 ======
+        function toggleMobileMenu() {
+            var n = document.getElementById("navLinks"), t = document.getElementById("menuToggle"), o = document.getElementById("mobileMenuOverlay");
+            n.classList.toggle("active"); t.classList.toggle("active"); o.classList.toggle("active");
+            document.body.style.overflow = n.classList.contains("active") ? "hidden" : "";
+        }
+        function closeMobileMenu() {
+            var n = document.getElementById("navLinks"), t = document.getElementById("menuToggle"), o = document.getElementById("mobileMenuOverlay");
+            n.classList.remove("active"); t.classList.remove("active"); o.classList.remove("active"); document.body.style.overflow = "";
+        }
+        function scrollToStep(id) {
+            document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+        }
+
+        // ====== 数据存储 ======
+        var DAYS = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
+        var TIME_SLOTS = [
+            "08:00-09:40", "10:00-11:40", "14:00-15:40", "16:00-17:40", "19:00-20:40"
+        ];
+
+        var scheduleData = {
+            courses: [],
+            goals: [],
+            studySchedule: [],
+            tasks: []
+        };
+
+        function loadData() {
+            var saved = localStorage.getItem("schedulerData");
+            if (saved) {
+                try {
+                    scheduleData = JSON.parse(saved);
+                } catch(e) {}
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem("schedulerData", JSON.stringify(scheduleData));
+        }
+
+        // ====== 步骤1: OCR 课表导入 ======
+        var uploadArea = document.getElementById("uploadArea");
+        var fileInput = document.getElementById("scheduleFileInput");
+        var previewImg = document.getElementById("previewImg");
+        var ocrProgress = document.getElementById("ocrProgress");
+        var ocrProgressFill = document.getElementById("ocrProgressFill");
+        var ocrProgressText = document.getElementById("ocrProgressText");
+        var ocrResultArea = document.getElementById("ocrResultArea");
+        var ocrResultText = document.getElementById("ocrResultText");
+        var manualInputArea = document.getElementById("manualInputArea");
+        var currentImageFile = null;
+
+        fileInput.addEventListener("change", function(e) {
+            if (e.target.files[0]) handleFile(e.target.files[0]);
+        });
+        uploadArea.addEventListener("dragover", function(e) { e.preventDefault(); uploadArea.classList.add("dragover"); });
+        uploadArea.addEventListener("dragleave", function() { uploadArea.classList.remove("dragover"); });
+        uploadArea.addEventListener("drop", function(e) {
+            e.preventDefault(); uploadArea.classList.remove("dragover");
+            if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+        });
+
+        function handleFile(file) {
+            if (!file.type.startsWith("image/")) { alert("请上传图片文件！"); return; }
+            currentImageFile = file;
+            var reader = new FileReader();
+            reader.onload = function(e) { previewImg.src = e.target.result; previewImg.style.display = "block"; };
+            reader.readAsDataURL(file);
+        }
+
+        async function startOCR() {
+            if (!currentImageFile) { alert("请先选择课表图片！"); return; }
+            ocrResultArea.style.display = "none";
+            ocrProgress.classList.add("show");
+            ocrProgressFill.style.width = "0%";
+            ocrProgressText.style.display = "block";
+            ocrProgressText.textContent = "正在加载识别引擎...";
+
+            try {
+                var worker = await Tesseract.createWorker("chi_sim+eng", 1, {
+                    logger: function(m) {
+                        if (m.status === "recognizing text") {
+                            var pct = Math.round(m.progress * 100);
+                            ocrProgressFill.style.width = pct + "%";
+                            ocrProgressText.textContent = "正在识别文字... " + pct + "%";
+                        }
+                    }
+                });
+                ocrProgressText.textContent = "正在识别文字...";
+                var result = await worker.recognize(currentImageFile);
+                await worker.terminate();
+                ocrProgress.classList.remove("show");
+                ocrProgressText.style.display = "none";
+                ocrResultArea.style.display = "block";
+                ocrResultText.value = result.data.text.trim() || "（未识别到文字，请尝试手动输入）";
+            } catch(e) {
+                ocrProgress.classList.remove("show");
+                ocrProgressText.style.display = "none";
+                alert("识别失败：" + e.message);
+            }
+        }
+
+        function reRunOCR() {
+            ocrResultArea.style.display = "none";
+            startOCR();
+        }
+
+        function showManualInput() {
+            manualInputArea.style.display = "block";
+            manualInputArea.scrollIntoView({ behavior: "smooth" });
+        }
+
+        function parseManualSchedule() {
+            var text = document.getElementById("manualScheduleInput").value.trim();
+            if (!text) { alert("请输入课程信息！"); return; }
+            parseScheduleText(text);
+        }
+
+        function parseOCRResult() {
+            var text = ocrResultText.value.trim();
+            if (!text) { alert("识别结果为空，请重新识别或手动输入！"); return; }
+            parseScheduleText(text);
+        }
+
+        function parseScheduleText(text) {
+            var courses = [];
+            var lines = text.split("\n");
+
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                if (!line) continue;
+
+                var day = null, startTime = null, endTime = null, courseName = null;
+
+                for (var d = 0; d < DAYS.length; d++) {
+                    var dayPatterns = [DAYS[d], DAYS[d].replace("周", "星期"), "星期" + DAYS[d].replace("周", "")];
+                    for (var p = 0; p < dayPatterns.length; p++) {
+                        if (line.indexOf(dayPatterns[p]) >= 0) { day = DAYS[d]; break; }
+                    }
+                    if (day) break;
+                }
+
+                var timeMatch = line.match(/(\d{1,2}[:：]\d{2})\s*[-—~至到]\s*(\d{1,2}[:：]\d{2})/);
+                if (timeMatch) {
+                    startTime = timeMatch[1].replace("：", ":");
+                    endTime = timeMatch[2].replace("：", ":");
+                } else {
+                    var sectionMatch = line.match(/第\s*(\d+)\s*[-—~]\s*(\d+)\s*节/);
+                    if (sectionMatch) {
+                        var s = parseInt(sectionMatch[1]);
+                        var e = parseInt(sectionMatch[2]);
+                        if (s >= 1 && s <= 5 && e >= s && e <= 5) {
+                            var parts = TIME_SLOTS[s - 1].split("-");
+                            startTime = parts[0];
+                            endTime = parts[1];
+                        }
+                    }
+                }
+
+                if (day && (startTime || endTime)) {
+                    var nameLine = line;
+                    if (day) nameLine = nameLine.replace(new RegExp(day + "|星期" + day.replace("周", ""), "g"), "");
+                    if (timeMatch) nameLine = nameLine.replace(timeMatch[0], "");
+                    if (sectionMatch) nameLine = nameLine.replace(sectionMatch[0], "");
+                    nameLine = nameLine.replace(/\d{1,2}[:：]\d{2}/g, "").replace(/[-—~至到]/g, "").replace(/第\s*\d+\s*[-—~]\s*\d+\s*节/g, "").trim();
+
+                    if (nameLine && nameLine.length > 0 && nameLine.length < 30) {
+                        courseName = nameLine;
+                    }
+
+                    if (courseName) {
+                        courses.push({
+                            day: day,
+                            startTime: startTime || "00:00",
+                            endTime: endTime || "00:00",
+                            name: courseName
+                        });
+                    }
+                }
+            }
+
+            if (courses.length === 0) {
+                alert("未能自动解析出课程信息。\n\n请使用「手动输入」功能，按格式输入：\n周一 08:00-09:40 高等数学\n周二 14:00-15:40 数据结构");
+                showManualInput();
+                return;
+            }
+
+            scheduleData.courses = courses;
+            saveData();
+            renderSchedule();
+            alert("成功识别 " + courses.length + " 门课程！\n\n请查看下方课表和空闲时间。");
+            document.getElementById("step2").scrollIntoView({ behavior: "smooth" });
+        }
+
+        // ====== 步骤2: 课表展示与空闲分析 ======
+        function getTimeSlotIndex(timeStr) {
+            for (var i = 0; i < TIME_SLOTS.length; i++) {
+                var parts = TIME_SLOTS[i].split("-");
+                if (timeStr === parts[0] || timeStr === parts[1]) return i;
+                var h = parseInt(timeStr.split(":")[0]);
+                var m = parseInt(timeStr.split(":")[1]);
+                var sh = parseInt(parts[0].split(":")[0]);
+                var sm = parseInt(parts[0].split(":")[1]);
+                var eh = parseInt(parts[1].split(":")[0]);
+                var em = parseInt(parts[1].split(":")[1]);
+                var t = h * 60 + m, s = sh * 60 + sm, e = eh * 60 + em;
+                if (t >= s && t <= e) return i;
+            }
+            return -1;
+        }
+
+        function renderSchedule() {
+            if (scheduleData.courses.length === 0 && scheduleData.studySchedule.length === 0 && scheduleData.tasks.length === 0) {
+                document.getElementById("scheduleEmpty").style.display = "block";
+                document.getElementById("scheduleContent").style.display = "none";
+                return;
+            }
+
+            document.getElementById("scheduleEmpty").style.display = "none";
+            document.getElementById("scheduleContent").style.display = "block";
+
+            var grid = document.getElementById("scheduleGrid");
+            var html = '<table class="schedule-table"><thead><tr><th>时间</th>';
+            for (var d = 0; d < DAYS.length; d++) {
+                html += "<th>" + DAYS[d] + "</th>";
+            }
+            html += "</tr></thead><tbody>";
+
+            var courseCount = 0;
+            var freeCount = 0;
+
+            for (var t = 0; t < TIME_SLOTS.length; t++) {
+                html += "<tr><td><div class='cell-time'>" + TIME_SLOTS[t] + "</div></td>";
+                for (var d = 0; d < DAYS.length; d++) {
+                    var day = DAYS[d];
+                    var slot = TIME_SLOTS[t];
+                    var parts = slot.split("-");
+                    var course = null, study = null, reminder = null;
+
+                    for (var c = 0; c < scheduleData.courses.length; c++) {
+                        if (scheduleData.courses[c].day === day) {
+                            if (getTimeSlotIndex(scheduleData.courses[c].startTime) === t || getTimeSlotIndex(scheduleData.courses[c].endTime) === t) {
+                                course = scheduleData.courses[c];
+                                break;
+                            }
+                        }
+                    }
+
+                    for (var s = 0; s < scheduleData.studySchedule.length; s++) {
+                        if (scheduleData.studySchedule[s].day === day && scheduleData.studySchedule[s].slotIndex === t) {
+                            study = scheduleData.studySchedule[s];
+                            break;
+                        }
+                    }
+
+                    for (var r = 0; r < scheduleData.tasks.length; r++) {
+                        var taskDay = getDayFromDate(scheduleData.tasks[r].datetime);
+                        var taskTime = getTimeFromDate(scheduleData.tasks[r].datetime);
+                        if (taskDay === day && getTimeSlotIndex(taskTime) === t) {
+                            reminder = scheduleData.tasks[r];
+                            break;
+                        }
+                    }
+
+                    if (course) {
+                        html += "<td class='course'><div class='cell-course'>" + course.name + "</div><div class='cell-time'>" + course.startTime + "-" + course.endTime + "</div></td>";
+                        courseCount++;
+                    } else if (reminder) {
+                        html += "<td class='reminder'><div class='cell-reminder'>⏰ " + reminder.name + "</div></td>";
+                    } else if (study) {
+                        html += "<td class='study'><div class='cell-study'>📚 " + study.goalName + "</div></td>";
+                        freeCount++;
+                    } else {
+                        html += "<td class='free'>空闲</td>";
+                        freeCount++;
+                    }
+                }
+                html += "</tr>";
+            }
+            html += "</tbody></table>";
+            grid.innerHTML = html;
+
+            var totalSlots = TIME_SLOTS.length * DAYS.length;
+            var stats = document.getElementById("scheduleStats");
+            stats.innerHTML =
+                "<div class='stat-card'><div class='stat-num'>" + courseCount + "</div><div class='stat-label'>课程时段</div></div>" +
+                "<div class='stat-card'><div class='stat-num'>" + freeCount + "</div><div class='stat-label'>空闲时段</div></div>" +
+                "<div class='stat-card'><div class='stat-num'>" + scheduleData.studySchedule.length + "</div><div class='stat-label'>学习安排</div></div>" +
+                "<div class='stat-card'><div class='stat-num'>" + scheduleData.tasks.length + "</div><div class='stat-label'>提醒任务</div></div>";
+        }
+
+        function getDayFromDate(dateStr) {
+            if (!dateStr) return null;
+            var d = new Date(dateStr);
+            var day = d.getDay();
+            if (day === 0) return "周日";
+            return "周" + "一二三四五六"[day - 1];
+        }
+
+        function getTimeFromDate(dateStr) {
+            if (!dateStr) return null;
+            var d = new Date(dateStr);
+            var h = d.getHours().toString().padStart(2, "0");
+            var m = d.getMinutes().toString().padStart(2, "0");
+            return h + ":" + m;
+        }
+
+        // ====== 步骤3: 学习目标 & 自动排课 ======
+        function addGoal() {
+            var name = document.getElementById("goalName").value.trim();
+            var hours = parseFloat(document.getElementById("goalHours").value) || 2;
+            var priority = parseInt(document.getElementById("goalPriority").value);
+
+            if (!name) { alert("请输入学习目标！"); return; }
+
+            scheduleData.goals.push({ name: name, hours: hours, priority: priority });
+            saveData();
+            renderGoals();
+            document.getElementById("goalName").value = "";
+        }
+
+        function deleteGoal(idx) {
+            scheduleData.goals.splice(idx, 1);
+            saveData();
+            renderGoals();
+        }
+
+        function renderGoals() {
+            var list = document.getElementById("goalList");
+            if (scheduleData.goals.length === 0) {
+                list.innerHTML = "<div class='empty-tip'>还没有学习目标，添加一个吧~</div>";
+                return;
+            }
+            var priorityNames = { 1: "高", 2: "中", 3: "低" };
+            var html = "";
+            for (var i = 0; i < scheduleData.goals.length; i++) {
+                var g = scheduleData.goals[i];
+                html += "<div class='goal-item'>" +
+                    "<div class='goal-info'>" +
+                    "<div class='goal-name'>📚 " + g.name + "</div>" +
+                    "<div class='goal-meta'>每日 " + g.hours + " 小时 | 优先级：" + priorityNames[g.priority] + "</div>" +
+                    "</div>" +
+                    "<button class='goal-delete' onclick='deleteGoal(" + i + ")'>删除</button>" +
+                    "</div>";
+            }
+            list.innerHTML = html;
+        }
+
+        function autoSchedule() {
+            if (scheduleData.courses.length === 0) { alert("请先导入课表！"); return; }
+            if (scheduleData.goals.length === 0) { alert("请先添加学习目标！"); return; }
+
+            scheduleData.studySchedule = [];
+            var sortedGoals = scheduleData.goals.slice().sort(function(a, b) { return a.priority - b.priority; });
+
+            for (var gi = 0; gi < sortedGoals.length; gi++) {
+                var goal = sortedGoals[gi];
+                var slotsNeeded = Math.ceil(goal.hours * 2);
+                var slotsAssigned = 0;
+
+                for (var d = 0; d < DAYS.length && slotsAssigned < slotsNeeded; d++) {
+                    var day = DAYS[d];
+                    for (var t = 0; t < TIME_SLOTS.length && slotsAssigned < slotsNeeded; t++) {
+                        var isFree = true;
+                        for (var c = 0; c < scheduleData.courses.length; c++) {
+                            if (scheduleData.courses[c].day === day && (getTimeSlotIndex(scheduleData.courses[c].startTime) === t || getTimeSlotIndex(scheduleData.courses[c].endTime) === t)) {
+                                isFree = false; break;
+                            }
+                        }
+                        for (var s = 0; s < scheduleData.studySchedule.length; s++) {
+                            if (scheduleData.studySchedule[s].day === day && scheduleData.studySchedule[s].slotIndex === t) {
+                                isFree = false; break;
+                            }
+                        }
+
+                        if (isFree) {
+                            var sameDayCount = 0;
+                            for (var s2 = 0; s2 < scheduleData.studySchedule.length; s2++) {
+                                if (scheduleData.studySchedule[s2].day === day && scheduleData.studySchedule[s2].goalName === goal.name) sameDayCount++;
+                            }
+                            if (sameDayCount < Math.ceil(slotsNeeded / 5)) {
+                                scheduleData.studySchedule.push({ day: day, slotIndex: t, goalName: goal.name });
+                                slotsAssigned++;
+                            }
+                        }
+                    }
+                }
+
+                if (slotsAssigned < slotsNeeded) {
+                    while (slotsAssigned < slotsNeeded) {
+                        var placed = false;
+                        for (var d2 = 0; d2 < DAYS.length && !placed; d2++) {
+                            var day2 = DAYS[d2];
+                            for (var t2 = 0; t2 < TIME_SLOTS.length && !placed; t2++) {
+                                var isFree2 = true;
+                                for (var c2 = 0; c2 < scheduleData.courses.length; c2++) {
+                                    if (scheduleData.courses[c2].day === day2 && (getTimeSlotIndex(scheduleData.courses[c2].startTime) === t2 || getTimeSlotIndex(scheduleData.courses[c2].endTime) === t2)) {
+                                        isFree2 = false; break;
+                                    }
+                                }
+                                for (var s3 = 0; s3 < scheduleData.studySchedule.length; s3++) {
+                                    if (scheduleData.studySchedule[s3].day === day2 && scheduleData.studySchedule[s3].slotIndex === t2) {
+                                        isFree2 = false; break;
+                                    }
+                                }
+                                if (isFree2) {
+                                    scheduleData.studySchedule.push({ day: day2, slotIndex: t2, goalName: goal.name });
+                                    slotsAssigned++;
+                                    placed = true;
+                                }
+                            }
+                        }
+                        if (!placed) break;
+                    }
+                }
+            }
+
+            saveData();
+            renderSchedule();
+            alert("自动排课完成！\n\n共安排 " + scheduleData.studySchedule.length + " 个学习时段。\n请查看上方课表，黄色为学习时间。");
+            document.getElementById("step2").scrollIntoView({ behavior: "smooth" });
+        }
+
+        function clearStudySchedule() {
+            scheduleData.studySchedule = [];
+            saveData();
+            renderSchedule();
+        }
+
+        // ====== 步骤4: 提醒任务 ======
+        function addTask() {
+            var name = document.getElementById("taskName").value.trim();
+            var time = document.getElementById("taskTime").value;
+
+            if (!name) { alert("请输入任务名称！"); return; }
+            if (!time) { alert("请选择提醒时间！"); return; }
+
+            scheduleData.tasks.push({ name: name, datetime: time, notified: false });
+            saveData();
+            renderTasks();
+            renderSchedule();
+            document.getElementById("taskName").value = "";
+            document.getElementById("taskTime").value = "";
+        }
+
+        function deleteTask(idx) {
+            scheduleData.tasks.splice(idx, 1);
+            saveData();
+            renderTasks();
+            renderSchedule();
+        }
+
+        function renderTasks() {
+            var list = document.getElementById("taskList");
+            if (scheduleData.tasks.length === 0) {
+                list.innerHTML = "<div class='empty-tip'>还没有提醒任务，添加一个吧~</div>";
+                return;
+            }
+            var html = "";
+            for (var i = 0; i < scheduleData.tasks.length; i++) {
+                var t = scheduleData.tasks[i];
+                var d = new Date(t.datetime);
+                var dateStr = d.toLocaleString("zh-CN", { month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" });
+                var now = new Date();
+                var diff = d - now;
+                var status = "";
+                if (diff < 0) status = "<span style='color:#999'>已过期</span>";
+                else if (diff < 3600000) status = "<span style='color:#e74c3c'>即将开始</span>";
+                else status = "<span style='color:var(--accent3)'>待提醒</span>";
+
+                html += "<div class='task-item'>" +
+                    "<div class='task-info'>" +
+                    "<div class='task-title'>⏰ " + t.name + "</div>" +
+                    "<div class='task-meta'>" + dateStr + " | " + status + "</div>" +
+                    "</div>" +
+                    "<div class='task-actions'>" +
+                    "<button class='task-btn delete' onclick='deleteTask(" + i + ")'>删除</button>" +
+                    "</div>" +
+                    "</div>";
+            }
+            list.innerHTML = html;
+        }
+
+        // ====== 浏览器通知 ======
+        function enableBrowserNotifications() {
+            if (!("Notification" in window)) { alert("当前浏览器不支持通知功能"); return; }
+            Notification.requestPermission().then(function(p) {
+                if (p === "granted") {
+                    alert("✅ 浏览器通知已开启！\n\n当任务即将开始时，会弹出桌面通知提醒你。");
+                } else {
+                    alert("⚠️ 通知权限被拒绝，请在浏览器设置中允许通知。");
+                }
+            });
+        }
+
+        function testNotification() {
+            if (!("Notification" in window)) { alert("当前浏览器不支持通知功能"); return; }
+            if (Notification.permission === "granted") {
+                new Notification("🏸 羽球人的世界", {
+                    body: "这是一条测试通知，提醒功能正常工作！",
+                    icon: "https://emojicdn.elk.sh/🏸"
+                });
+            } else {
+                enableBrowserNotifications();
+            }
+        }
+
+        function checkReminders() {
+            if (!("Notification" in window) || Notification.permission !== "granted") return;
+            var now = new Date();
+            for (var i = 0; i < scheduleData.tasks.length; i++) {
+                var t = scheduleData.tasks[i];
+                if (t.notified) continue;
+                var taskTime = new Date(t.datetime);
+                var diff = taskTime - now;
+                if (diff > 0 && diff < 30 * 60 * 1000) {
+                    var mins = Math.round(diff / 60000);
+                    new Notification("⏰ 任务即将开始", {
+                        body: t.name + "\n还有 " + mins + " 分钟开始",
+                        icon: "https://emojicdn.elk.sh/⏰"
+                    });
+                    t.notified = true;
+                    saveData();
+                    renderTasks();
+                }
+            }
+        }
+
+        // ====== 导出任务数据（用于飞书提醒） ======
+        function exportTasks() {
+            if (scheduleData.tasks.length === 0 && scheduleData.studySchedule.length === 0) {
+                return "暂无任务";
+            }
+            var text = "📋 本周学习计划提醒\n";
+            text += "========================\n\n";
+
+            if (scheduleData.studySchedule.length > 0) {
+                text += "📚 学习安排：\n";
+                for (var d = 0; d < DAYS.length; d++) {
+                    var dayTasks = scheduleData.studySchedule.filter(function(s) { return s.day === DAYS[d]; });
+                    if (dayTasks.length > 0) {
+                        text += "\n" + DAYS[d] + "：\n";
+                        for (var i = 0; i < dayTasks.length; i++) {
+                            text += "  " + TIME_SLOTS[dayTasks[i].slotIndex] + " - " + dayTasks[i].goalName + "\n";
+                        }
+                    }
+                }
+            }
+
+            if (scheduleData.tasks.length > 0) {
+                text += "\n⏰ 提醒任务：\n";
+                for (var j = 0; j < scheduleData.tasks.length; j++) {
+                    var task = scheduleData.tasks[j];
+                    var dt = new Date(task.datetime);
+                    text += "  " + dt.toLocaleString("zh-CN") + " - " + task.name + "\n";
+                }
+            }
+
+            return text;
+        }
+
+        // ====== 初始化 ======
+        loadData();
+        renderSchedule();
+        renderGoals();
+        renderTasks();
+        setInterval(checkReminders, 60000);
+    </script>
+</body>
+</html>
