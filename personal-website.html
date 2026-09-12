@@ -982,17 +982,70 @@
         .achievement-card {
             position: relative;
             overflow: hidden;
+            background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(224,244,255,0.85));
+            border: 3px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-cartoon);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .achievement-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--accent), var(--accent3), var(--accent5), var(--accent4));
+            border-radius: 20px 20px 0 0;
+        }
+
+        .achievement-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-8px) scale(1.02) rotate(-0.5deg);
+            box-shadow: 8px 8px 0px var(--ink);
+            border-color: var(--accent5);
+            background: linear-gradient(145deg, rgba(255,255,255,1), rgba(208,238,252,0.9));
+        }
+
+        .achievement-card:hover::after {
+            opacity: 1;
         }
 
         .achievement-icon {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 1rem;
+            display: inline-block;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.1));
+        }
+
+        .achievement-card:hover .achievement-icon {
+            transform: scale(1.2) rotate(10deg);
         }
 
         .achievement-card h4 {
             font-size: 2.2rem;
             margin-bottom: 0.8rem;
             color: var(--accent2);
+            transition: color 0.3s ease;
+        }
+
+        .achievement-card:hover h4 {
+            color: var(--accent5);
         }
 
         .achievement-card p {
@@ -1003,14 +1056,16 @@
 
         .achievement-year {
             display: inline-block;
-            padding: 0.3rem 1rem;
-            background: linear-gradient(135deg, var(--accent), var(--accent3));
-            border-radius: 20px;
+            padding: 0.3rem 1.2rem;
+            background: linear-gradient(135deg, var(--accent2), var(--accent3));
+            border-radius: 25px;
             font-size: 1.3rem;
             color: #fff;
-            margin-bottom: 1rem;
-            font-weight: 600;
+            margin-bottom: 1.2rem;
+            font-weight: 700;
             border: 2px solid #fff;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
         }
 
         /* 联系我 */
@@ -1692,8 +1747,8 @@
                 </div>
             </div>
             <div class="about-text glass-card reveal">
-                <h3>学生 &amp; 羽毛球爱好者</h3>
-                <p>你好！我叫周剑，是一名热爱生活的学生。我相信学习和运动是生活中最重要的两件事——一个让头脑充实，一个让身体健康。</p>
+                <h3>武夷学院电气班学生 &amp; 羽毛球爱好者</h3>
+                <p>你好！我叫周剑，是2026级武夷学院电气班的一名学生。我相信学习和运动是生活中最重要的两件事——一个让头脑充实，一个让身体健康。</p>
                 <p>羽毛球是我最大的爱好，在球场上挥洒汗水的时刻让我感到无比快乐和自由。每一次挥拍、每一场比赛，都是对自我的挑战和超越。</p>
                 <div class="info-grid">
                     <div class="info-item">
@@ -1707,7 +1762,7 @@
                         <div class="info-icon">🎓</div>
                         <div class="info-text">
                             <span>身份</span>
-                            <strong>在校学生</strong>
+                            <strong>2026级 武夷学院电气班</strong>
                         </div>
                     </div>
                     <div class="info-item">
@@ -2096,7 +2151,7 @@
         });
 
         // 打字机效果
-        const texts = ['在校学生', '羽毛球爱好者', '热爱运动的少年', '不断学习成长'];
+        const texts = ['武夷学院电气班学生', '羽毛球爱好者', '热爱运动的少年', '不断学习成长'];
         let textIndex = 0;
         let charIndex = 0;
         let isDeleting = false;
