@@ -29,8 +29,39 @@
         .bg-gradient {
             position: fixed;
             inset: 0;
-            background: radial-gradient(ellipse at 50% 60%, var(--bg-mid) 0%, var(--bg-light) 40%, var(--bg-lightest) 100%);
+            background: linear-gradient(135deg, #e0f4ff 0%, #d6ecfa 25%, #c5e3f7 50%, #d6ecfa 75%, #e0f4ff 100%);
+            background-size: 400% 400%;
             z-index: 0;
+            animation: bgFlow 15s ease infinite;
+        }
+
+        @keyframes bgFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ====== 动态波浪装饰 ====== */
+        .wave-deco {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .wave-deco svg { width: 100%; height: 100%; }
+
+        .wave-deco path {
+            animation: waveMove 8s linear infinite;
+        }
+
+        @keyframes waveMove {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
         /* ====== Canvas 粒子 ====== */
@@ -89,11 +120,11 @@
         /* ====== Logo 圆环 ====== */
         .logo-ring {
             position: relative;
-            width: 140px;
-            height: 140px;
+            width: 160px;
+            height: 160px;
             margin-bottom: 2.5rem;
             opacity: 0;
-            animation: logoAppear 1s ease 0.3s forwards;
+            animation: logoAppear 1s ease 0.3s forwards, logoFloat 4s ease-in-out 1.3s infinite;
         }
 
         .logo-ring::before {
@@ -124,14 +155,60 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3.5rem;
             box-shadow: 0 0 40px rgba(116, 185, 255, 0.4), inset 0 0 20px rgba(255,255,255,0.8);
             border: 2px solid rgba(116, 185, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-svg {
+            width: 80%;
+            height: 80%;
+            animation: logoSvgFloat 3s ease-in-out infinite;
+        }
+
+        .logo-svg .shuttlecock {
+            animation: shuttleSpin 4s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        .logo-svg .feather {
+            animation: featherShimmer 2s ease-in-out infinite;
+        }
+
+        .logo-svg .cork {
+            animation: corkPulse 2s ease-in-out infinite;
         }
 
         @keyframes logoAppear {
             from { opacity: 0; transform: scale(0.5) rotate(-180deg); }
             to { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        @keyframes logoSvgFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-3px) rotate(5deg); }
+            66% { transform: translateY(2px) rotate(-3deg); }
+        }
+
+        @keyframes shuttleSpin {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(8deg) scale(1.05); }
+        }
+
+        @keyframes featherShimmer {
+            0%, 100% { opacity: 0.85; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes corkPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
         }
 
         @keyframes ringSpin {
@@ -151,13 +228,28 @@
             text-align: center;
             margin-bottom: 0.8rem;
             opacity: 0;
-            animation: textRise 1s ease 0.6s forwards;
+            animation: textRise 1s ease 0.6s forwards, titleGlow 3s ease-in-out 1.6s infinite;
             letter-spacing: 0.05em;
         }
 
         .intro-title .accent {
-            color: var(--accent);
+            background: linear-gradient(135deg, var(--accent), var(--accent3), var(--accent2));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
             font-style: italic;
+            animation: accentFlow 3s ease infinite;
+        }
+
+        @keyframes accentFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 0 0 rgba(116, 185, 255, 0); }
+            50% { text-shadow: 0 0 20px rgba(116, 185, 255, 0.3); }
         }
 
         .intro-subtitle {
@@ -383,9 +475,65 @@
 
     <canvas id="particleCanvas"></canvas>
 
+    <!-- 底部波浪装饰 -->
+    <div class="wave-deco">
+        <svg viewBox="0 0 2880 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,60 C360,100 720,20 1440,60 C2160,100 2520,20 2880,60 L2880,120 L0,120 Z"
+                  fill="rgba(116, 185, 255, 0.15)"/>
+            <path d="M0,80 C360,40 720,100 1440,70 C2160,40 2520,100 2880,70 L2880,120 L0,120 Z"
+                  fill="rgba(0, 206, 201, 0.1)"/>
+        </svg>
+    </div>
+
     <div class="intro-container">
         <div class="logo-ring">
-            <div class="logo-inner">🏸</div>
+            <div class="logo-inner">
+                <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 羽毛球拍椭圆框 -->
+                    <ellipse cx="50" cy="50" rx="38" ry="42" fill="none" stroke="#0984e3" stroke-width="2.5" opacity="0.3"/>
+                    <!-- 球拍网线 - 竖线 -->
+                    <line x1="50" y1="12" x2="50" y2="88" stroke="#74b9ff" stroke-width="0.6" opacity="0.25"/>
+                    <line x1="35" y1="18" x2="35" y2="82" stroke="#74b9ff" stroke-width="0.5" opacity="0.2"/>
+                    <line x1="65" y1="18" x2="65" y2="82" stroke="#74b9ff" stroke-width="0.5" opacity="0.2"/>
+                    <line x1="22" y1="30" x2="22" y2="70" stroke="#74b9ff" stroke-width="0.4" opacity="0.15"/>
+                    <line x1="78" y1="30" x2="78" y2="70" stroke="#74b9ff" stroke-width="0.4" opacity="0.15"/>
+                    <!-- 球拍网线 - 横线 -->
+                    <line x1="14" y1="50" x2="86" y2="50" stroke="#74b9ff" stroke-width="0.6" opacity="0.25"/>
+                    <line x1="18" y1="35" x2="82" y2="35" stroke="#74b9ff" stroke-width="0.5" opacity="0.2"/>
+                    <line x1="18" y1="65" x2="82" y2="65" stroke="#74b9ff" stroke-width="0.5" opacity="0.2"/>
+
+                    <!-- 羽毛球主体 -->
+                    <g class="shuttlecock">
+                        <!-- 羽毛 -->
+                        <g class="feather">
+                            <path d="M50,20 L42,55 L50,52 L58,55 Z" fill="#fff" stroke="#dfe6e9" stroke-width="0.5"/>
+                            <path d="M50,20 L38,50 L44,50 L50,48 L56,50 L62,50 Z" fill="#f5f6fa" stroke="#dfe6e9" stroke-width="0.4" opacity="0.9"/>
+                            <line x1="50" y1="20" x2="50" y2="48" stroke="#b2bec3" stroke-width="0.5" opacity="0.4"/>
+                            <line x1="50" y1="22" x2="44" y2="48" stroke="#b2bec3" stroke-width="0.3" opacity="0.3"/>
+                            <line x1="50" y1="22" x2="56" y2="48" stroke="#b2bec3" stroke-width="0.3" opacity="0.3"/>
+                            <line x1="50" y1="25" x2="40" y2="47" stroke="#b2bec3" stroke-width="0.3" opacity="0.25"/>
+                            <line x1="50" y1="25" x2="60" y2="47" stroke="#b2bec3" stroke-width="0.3" opacity="0.25"/>
+                        </g>
+                        <!-- 软木球头 -->
+                        <g class="cork">
+                            <circle cx="50" cy="58" r="9" fill="#0984e3" opacity="0.9"/>
+                            <circle cx="50" cy="58" r="9" fill="none" stroke="#fff" stroke-width="1.5"/>
+                            <ellipse cx="47" cy="55" rx="3" ry="2" fill="rgba(255,255,255,0.4)"/>
+                        </g>
+                    </g>
+
+                    <!-- 装饰光点 -->
+                    <circle cx="25" cy="25" r="1.5" fill="#74b9ff" opacity="0.4">
+                        <animate attributeName="opacity" values="0.2;0.8;0.2" dur="2s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="75" cy="75" r="1.5" fill="#00cec9" opacity="0.4">
+                        <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="78" cy="22" r="1" fill="#0984e3" opacity="0.3">
+                        <animate attributeName="opacity" values="0.1;0.6;0.1" dur="3s" repeatCount="indefinite"/>
+                    </circle>
+                </svg>
+            </div>
         </div>
 
         <h1 class="intro-title">
