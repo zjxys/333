@@ -1658,6 +1658,262 @@
             .hero-3d { perspective: none; }
             .hero-3d-content { transform: none !important; }
             .cloud-deco { display: none; }
+            .nav-mobile-btn { display: flex !important; }
+            .nav-links.mobile-open { display: flex !important; flex-direction: column; position: fixed; top: 70px; left: 0; right: 0; background: rgba(255,255,255,0.98); padding: 2rem; gap: 1rem; border-bottom: 3px solid var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(20px); }
+        }
+
+        /* ====== 深色模式 ====== */
+        body.dark-mode {
+            --bg: #1a1a2e;
+            --bg2: rgba(255, 255, 255, 0.08);
+            --ink: #e0e0e0;
+            --muted: #a0a0b0;
+            --rule: rgba(116, 185, 255, 0.2);
+            --card-border: rgba(116, 185, 255, 0.4);
+            --shadow-cartoon: 4px 4px 0px #0a0a1a;
+            --shadow-cartoon-lg: 6px 6px 0px #0a0a1a;
+        }
+
+        body.dark-mode .animated-bg {
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #1a1a2e);
+        }
+
+        body.dark-mode .splash-screen {
+            background: linear-gradient(135deg, #0f3460, #16213e, #533483);
+        }
+
+        body.dark-mode nav {
+            background: rgba(26, 26, 46, 0.9);
+            border-bottom-color: var(--accent);
+        }
+
+        body.dark-mode .nav-links.mobile-open {
+            background: rgba(26, 26, 46, 0.98);
+        }
+
+        body.dark-mode .stat-item,
+        body.dark-mode .glass-card,
+        body.dark-mode .like-section,
+        body.dark-mode .guestbook-container,
+        body.dark-mode .ai-chat-container {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--card-border);
+        }
+
+        body.dark-mode .stat-item { background: rgba(255,255,255,0.08); }
+
+        body.dark-mode .info-item {
+            background: rgba(116, 185, 255, 0.08);
+        }
+
+        body.dark-mode .skill-item {
+            background: rgba(116, 185, 255, 0.06);
+        }
+
+        body.dark-mode input,
+        body.dark-mode textarea {
+            background: rgba(255, 255, 255, 0.08) !important;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .qa-user {
+            background: linear-gradient(135deg, #0984e3, #74b9ff);
+        }
+
+        body.dark-mode .qa-ai {
+            background: linear-gradient(135deg, rgba(0, 206, 201, 0.1), rgba(116, 185, 255, 0.1));
+        }
+
+        body.dark-mode .achievement-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+        }
+
+        body.dark-mode footer {
+            background: rgba(26, 26, 46, 0.5);
+            border-top-color: var(--accent);
+        }
+
+        body.dark-mode .nav-links a:hover {
+            color: #fff;
+        }
+
+        body.dark-mode .logo {
+            color: var(--accent);
+        }
+
+        /* ====== 深色模式开关 ====== */
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            background: rgba(255,255,255,0.1);
+            cursor: pointer;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(180deg) scale(1.1);
+            background: var(--accent);
+        }
+
+        /* ====== 阅读进度条 ====== */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent3), var(--accent5), var(--accent4));
+            background-size: 200% 100%;
+            z-index: 1001;
+            transition: width 0.1s ease;
+            animation: progressGlow 2s ease infinite;
+        }
+
+        @keyframes progressGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* ====== 回到顶部按钮 ====== */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: 3px solid #fff;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 3px 3px 0 var(--ink), 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(0.8);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px) scale(1.1) rotate(-10deg);
+            box-shadow: 5px 5px 0 var(--ink), 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .back-to-top:active {
+            transform: translateY(0) scale(0.95);
+        }
+
+        /* ====== 移动端汉堡菜单按钮 ====== */
+        .nav-mobile-btn {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 10px;
+            transition: background 0.2s;
+        }
+
+        .nav-mobile-btn span {
+            width: 25px;
+            height: 3px;
+            background: var(--accent2);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-mobile-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .nav-mobile-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .nav-mobile-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* ====== 导航高亮 ====== */
+        .nav-links a.active {
+            color: #fff;
+            background: var(--accent);
+        }
+
+        .nav-links a.active::after {
+            width: 70%;
+        }
+
+        /* ====== 技能进度条 ====== */
+        .skill-bar-wrapper {
+            margin-top: 0.6rem;
+            height: 10px;
+            background: rgba(116, 185, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid rgba(116, 185, 255, 0.15);
+        }
+
+        .skill-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            width: 0%;
+            transition: width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: barShine 2s ease infinite;
+        }
+
+        @keyframes barShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .skill-bar-fill.expert { background: linear-gradient(90deg, var(--accent2), var(--accent)); }
+        .skill-bar-fill.good { background: linear-gradient(90deg, var(--accent3), var(--accent6)); }
+        .skill-bar-fill.progress { background: linear-gradient(90deg, var(--accent4), var(--accent5)); }
+        .skill-bar-fill.basic { background: linear-gradient(90deg, var(--accent5), var(--accent4)); }
+
+        /* ====== 导航右侧容器 ====== */
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* ====== 深色模式粒子调整 ====== */
+        body.dark-mode .particle {
+            opacity: 0.15;
+        }
+
+        body.dark-mode .cloud-deco {
+            opacity: 0.1;
         }
     </style>
 </head>
@@ -1687,6 +1943,9 @@
     <div class="cloud-deco c3">☁️</div>
     <div class="particles" id="particles"></div>
 
+    <!-- 阅读进度条 -->
+    <div class="reading-progress" id="readingProgress"></div>
+
     <!-- 鼠标跟随光点 -->
     <div class="cursor-glow" id="cursorGlow"></div>
 
@@ -1694,17 +1953,26 @@
     <nav id="navbar">
         <div class="nav-container">
             <div class="logo">🏸 羽球人的世界</div>
-            <ul class="nav-links">
-                <li><a href="#home">首页</a></li>
-                <li><a href="#about">关于我</a></li>
-                <li><a href="#hobbies">兴趣爱好</a></li>
-                <li><a href="#skills">技能</a></li>
-                <li><a href="#achievements">成就</a></li>
-                <li><a href="#guestbook">留言板</a></li>
-                <li><a href="#contact">联系</a></li>
-            </ul>
+            <div class="nav-right">
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#home" class="nav-link">首页</a></li>
+                    <li><a href="#about" class="nav-link">关于我</a></li>
+                    <li><a href="#hobbies" class="nav-link">兴趣爱好</a></li>
+                    <li><a href="#skills" class="nav-link">技能</a></li>
+                    <li><a href="#achievements" class="nav-link">成就</a></li>
+                    <li><a href="#guestbook" class="nav-link">留言板</a></li>
+                    <li><a href="#contact" class="nav-link">联系</a></li>
+                </ul>
+                <button class="theme-toggle" id="themeToggle" title="切换深色/浅色模式">☀️</button>
+                <div class="nav-mobile-btn" id="navMobileBtn">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
         </div>
     </nav>
+
+    <!-- 回到顶部按钮 -->
+    <button class="back-to-top" id="backToTop" title="回到顶部">↑</button>
 
     <!-- 欢迎界面 -->
     <section class="hero" id="home">
@@ -1867,55 +2135,55 @@
             <div class="skill-category glass-card reveal">
                 <h3>🏸 羽毛球技能</h3>
                 <div class="skill-item">
-                    <div class="skill-name">正手击球</div>
+                    <div class="skill-name">正手击球 <span class="skill-tag">熟练</span></div>
                     <p class="skill-desc">经过三年的练习，正手高远球和杀球已经比较稳定，能够控制落点方向，比赛中可以主动进攻得分。</p>
-                    <span class="skill-tag">熟练</span>
+                    <div class="skill-bar-wrapper"><div class="skill-bar-fill expert" data-width="85"></div></div>
                 </div>
                 <div class="skill-item">
-                    <div class="skill-name">反手击球</div>
+                    <div class="skill-name">反手击球 <span class="skill-tag">进阶中</span></div>
                     <p class="skill-desc">反手击球正在稳步提升中，反手高远球可以打到后场，反手吊球也能控制比较好，但反手杀球还需要加强。</p>
-                    <span class="skill-tag">进阶中</span>
+                    <div class="skill-bar-wrapper"><div class="skill-bar-fill progress" data-width="60"></div></div>
                 </div>
                 <div class="skill-item">
-                    <div class="skill-name">网前小球</div>
+                    <div class="skill-name">网前小球 <span class="skill-tag">良好</span></div>
                     <p class="skill-desc">网前搓球和勾球手感不错，能够灵活应对网前的各种来球，推球和扑球也在不断进步中。</p>
-                    <span class="skill-tag">良好</span>
+                    <div class="skill-bar-wrapper"><div class="skill-bar-fill good" data-width="75"></div></div>
                 </div>
             </div>
             <div class="skill-category glass-card reveal">
                 <h3>📖 学习成长</h3>
                 <div class="skill-item">
-                    <div class="skill-name">学习热情</div>
+                    <div class="skill-name">学习热情 <span class="skill-tag">充沛</span></div>
                     <p class="skill-desc">对新知识充满好奇心，喜欢探索课本以外的知识，遇到不懂的问题会主动查阅资料或请教老师。</p>
-                    <span class="skill-tag">充沛</span>
+                    <div class="skill-bar-wrapper"><div class="skill-bar-fill expert" data-width="90"></div></div>
                 </div>
                 <div class="skill-item">
-                    <div class="skill-name">团队精神</div>
+                    <div class="skill-name">团队精神 <span class="skill-tag">优秀</span></div>
                     <p class="skill-desc">在班级活动和体育比赛中善于与同学配合，乐于分享和帮助他人，是团队中值得信赖的伙伴。</p>
-                    <span class="skill-tag">优秀</span>
+                    <div class="skill-bar-wrapper"><div class="skill-bar-fill expert" data-width="88"></div></div>
                 </div>
                 <div class="skill-item">
-                    <div class="skill-name">进取精神</div>
+                    <div class="skill-name">进取精神 <span class="skill-tag">坚定</span></div>
                     <p class="skill-desc">面对困难不轻言放弃，不管是学习还是运动都坚持到底，相信每一次努力都会有收获。</p>
-                    <span class="skill-tag">坚定</span>
+                    <div class="skill-bar-wrapper"><div class="skill-bar-fill expert" data-width="82"></div></div>
                 </div>
             </div>
             <div class="skill-category glass-card reveal">
                 <h3>💻 电脑技能</h3>
                 <div class="skill-item">
-                    <div class="skill-name">办公软件</div>
+                    <div class="skill-name">办公软件 <span class="skill-tag">基础</span></div>
                     <p class="skill-desc">能熟练使用Word写文档、做表格，PPT制作也在学习中，可以完成基本的作业和报告排版。</p>
-                    <span class="skill-tag">基础</span>
+                    <div class="skill-bar-wrapper"><div class="skill-bar-fill basic" data-width="55"></div></div>
                 </div>
                 <div class="skill-item">
-                    <div class="skill-name">上网冲浪</div>
+                    <div class="skill-name">上网冲浪 <span class="skill-tag">熟练</span></div>
                     <p class="skill-desc">善于利用网络搜索学习资料和羽毛球教学视频，能快速找到需要的信息和资源。</p>
-                    <span class="skill-tag">熟练</span>
+                    <div class="skill-bar-wrapper"><div class="skill-bar-fill good" data-width="80"></div></div>
                 </div>
                 <div class="skill-item">
-                    <div class="skill-name">简单修图</div>
+                    <div class="skill-name">简单修图 <span class="skill-tag">入门</span></div>
                     <p class="skill-desc">会用手机修图软件做简单的图片处理，比如裁剪、调色、加滤镜，记录生活中的美好瞬间。</p>
-                    <span class="skill-tag">入门</span>
+                    <div class="skill-bar-wrapper"><div class="skill-bar-fill basic" data-width="45"></div></div>
                 </div>
             </div>
         </div>
@@ -2259,6 +2527,91 @@
             revealOnScroll();
         });
         revealOnScroll();
+
+        // ====== 深色模式切换 ======
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeToggle.textContent = '🌙';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            themeToggle.textContent = isDark ? '🌙' : '☀️';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+
+        // ====== 阅读进度条 ======
+        const readingProgress = document.getElementById('readingProgress');
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            readingProgress.style.width = progress + '%';
+        });
+
+        // ====== 回到顶部按钮 ======
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ====== 移动端汉堡菜单 ======
+        const navMobileBtn = document.getElementById('navMobileBtn');
+        const navLinks = document.getElementById('navLinks');
+        navMobileBtn.addEventListener('click', () => {
+            navMobileBtn.classList.toggle('active');
+            navLinks.classList.toggle('mobile-open');
+        });
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMobileBtn.classList.remove('active');
+                navLinks.classList.remove('mobile-open');
+            });
+        });
+
+        // ====== 导航高亮 ======
+        const sections = document.querySelectorAll('section[id]');
+        const navItems = document.querySelectorAll('.nav-link');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.getBoundingClientRect().top;
+                if (sectionTop < 120) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === '#' + current) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // ====== 技能进度条动画 ======
+        function animateSkillBars() {
+            const skillBars = document.querySelectorAll('.skill-bar-fill');
+            skillBars.forEach(bar => {
+                const rect = bar.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 50 && !bar.classList.contains('animated')) {
+                    bar.classList.add('animated');
+                    const width = bar.getAttribute('data-width');
+                    bar.style.width = width + '%';
+                }
+            });
+        }
+        window.addEventListener('scroll', animateSkillBars);
+        animateSkillBars();
 
         // 表单提交处理
         const contactForm = document.getElementById('contactForm');
