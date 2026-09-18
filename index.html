@@ -180,72 +180,120 @@
             display: inline-flex;
             align-items: center;
             gap: 0.8rem;
-            padding: 1rem 3rem;
+            padding: 1.1rem 3.5rem;
             font-size: 1.1rem;
             font-weight: 600;
             font-family: inherit;
             color: var(--jade);
-            background: transparent;
-            border: 2px solid var(--jade);
+            background: rgba(95, 179, 161, 0.04);
+            border: none;
             border-radius: 50px;
             cursor: pointer;
             overflow: hidden;
             opacity: 0;
             transform: translateY(20px);
             animation: btnAppear 1s ease 1.3s forwards;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
             z-index: 1;
+            letter-spacing: 0.08em;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
         }
 
+        /* 渐变边框层 */
         .enter-btn::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, var(--jade), var(--jade-dim));
+            border-radius: 50px;
+            padding: 2px;
+            background: linear-gradient(135deg, var(--jade), transparent 40%, transparent 60%, var(--jade-dim));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: 0;
+            animation: borderShimmer 3s linear infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes borderShimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* 流光填充层 */
+        .enter-btn-glow {
+            position: absolute;
+            inset: 0;
+            border-radius: 50px;
+            background: linear-gradient(110deg, transparent 30%, rgba(95, 179, 161, 0.15) 50%, transparent 70%);
+            background-size: 200% 100%;
+            background-position: -100% 0;
+            transition: background-position 0.8s ease;
+            z-index: 0;
+        }
+
+        .enter-btn:hover .enter-btn-glow {
+            background-position: 200% 0;
+        }
+
+        /* 底色填充层 */
+        .enter-btn-fill {
+            position: absolute;
+            inset: 0;
+            border-radius: 50px;
+            background: linear-gradient(135deg, rgba(95, 179, 161, 0.15), rgba(61, 138, 114, 0.08));
             opacity: 0;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.5s ease;
+            z-index: 0;
+        }
+
+        .enter-btn:hover .enter-btn-fill {
+            opacity: 1;
+        }
+
+        /* 呼吸脉冲 */
+        .enter-btn-pulse {
+            position: absolute;
+            inset: 0;
+            border-radius: 50px;
+            border: 2px solid var(--jade);
+            opacity: 0;
+            animation: btnPulse 2.5s ease-out infinite;
             z-index: -1;
         }
 
-        .enter-btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(95, 179, 161, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s ease, height 0.6s ease;
-            z-index: -1;
+        @keyframes btnPulse {
+            0% { transform: scale(1); opacity: 0.4; }
+            100% { transform: scale(1.3); opacity: 0; }
         }
 
         .enter-btn:hover {
             color: #fff;
-            border-color: var(--jade);
-            box-shadow: 0 10px 40px rgba(95, 179, 161, 0.4), 0 0 20px rgba(95, 179, 161, 0.2);
-            transform: translateY(-3px) scale(1.03);
-        }
-
-        .enter-btn:hover::before { opacity: 1; }
-
-        .enter-btn:hover::after {
-            width: 400px;
-            height: 400px;
+            transform: translateY(-4px) scale(1.04);
+            box-shadow: 0 15px 50px rgba(95, 179, 161, 0.35), 0 0 30px rgba(95, 179, 161, 0.15);
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
         }
 
         .enter-btn:active {
             transform: translateY(-1px) scale(0.98);
+            transition: transform 0.1s ease;
         }
 
         .enter-btn .arrow {
             display: inline-block;
-            transition: transform 0.4s ease;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 1;
         }
 
         .enter-btn:hover .arrow {
-            transform: translateX(8px);
+            transform: translateX(10px) rotate(360deg);
+        }
+
+        .enter-btn span:not(.arrow):not(.enter-btn-glow):not(.enter-btn-fill):not(.enter-btn-pulse) {
+            position: relative;
+            z-index: 1;
         }
 
         @keyframes btnAppear {
@@ -347,6 +395,9 @@
         <p class="intro-subtitle">2026级 武夷学院电气班 · 周剑的个人主页</p>
 
         <button class="enter-btn" id="enterBtn" onclick="enterSite()">
+            <span class="enter-btn-pulse"></span>
+            <span class="enter-btn-glow"></span>
+            <span class="enter-btn-fill"></span>
             <span>进入主页</span>
             <span class="arrow">→</span>
         </button>
