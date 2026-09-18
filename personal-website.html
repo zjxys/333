@@ -142,7 +142,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #74b9ff, #0984e3, #00cec9);
+            background: linear-gradient(135deg, #e0f4ff, #d6ecfa, #c5e3f7);
             z-index: 10000;
             display: flex;
             align-items: center;
@@ -198,8 +198,8 @@
         .splash-title {
             font-size: 3rem;
             font-weight: 700;
-            color: #fff;
-            text-shadow: 3px 3px 0 #2d3436, 6px 6px 20px rgba(0,0,0,0.2);
+            color: #2d3436;
+            text-shadow: 3px 3px 0 rgba(116, 185, 255, 0.3), 6px 6px 20px rgba(116, 185, 255, 0.15);
             margin-bottom: 0.5rem;
             opacity: 0;
             animation: titlePop 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.3s forwards;
@@ -212,7 +212,7 @@
 
         .splash-subtitle {
             font-size: 1.3rem;
-            color: rgba(255,255,255,0.9);
+            color: #636e72;
             margin-bottom: 2rem;
             opacity: 0;
             animation: subtitleSlide 0.6s ease 0.6s forwards;
@@ -226,9 +226,9 @@
         .splash-loader {
             width: 250px;
             height: 16px;
-            background: rgba(255,255,255,0.3);
+            background: rgba(116, 185, 255, 0.15);
             border-radius: 10px;
-            border: 3px solid #fff;
+            border: 3px solid rgba(116, 185, 255, 0.3);
             overflow: hidden;
             opacity: 0;
             animation: loaderAppear 0.5s ease 0.9s forwards;
@@ -236,7 +236,7 @@
 
         .splash-loader-bar {
             height: 100%;
-            background: linear-gradient(90deg, #fdcb6e, #fd79a8, #55efc4);
+            background: linear-gradient(90deg, #0984e3, #74b9ff, #00cec9);
             background-size: 200% 100%;
             border-radius: 6px;
             animation: loaderFill 2s ease forwards, loaderGlow 1s ease infinite;
@@ -1749,7 +1749,7 @@
         }
 
         body.dark-mode .splash-screen {
-            background: linear-gradient(135deg, #0f3460, #16213e, #533483);
+            background: linear-gradient(135deg, #e0f4ff, #c5e3f7, #d6ecfa);
         }
 
         body.dark-mode nav {
