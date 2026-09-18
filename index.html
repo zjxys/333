@@ -8,19 +8,20 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --teal-darkest: #050f0d;
-            --teal-dark: #0a1a17;
-            --teal-mid: #0d2622;
-            --jade: #5fb3a1;
-            --jade-dim: #3d8a72;
+            --bg-darkest: #0a0e27;
+            --bg-dark: #0f1438;
+            --bg-mid: #16213e;
             --accent: #74b9ff;
+            --accent2: #0984e3;
+            --accent3: #00cec9;
+            --accent6: #55efc4;
         }
 
         html, body {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: var(--teal-darkest);
+            background: var(--bg-darkest);
             font-family: 'Georgia', 'Noto Serif SC', serif;
         }
 
@@ -28,7 +29,7 @@
         .bg-gradient {
             position: fixed;
             inset: 0;
-            background: radial-gradient(ellipse at 50% 60%, var(--teal-mid) 0%, var(--teal-dark) 40%, var(--teal-darkest) 100%);
+            background: radial-gradient(ellipse at 50% 60%, var(--bg-mid) 0%, var(--bg-dark) 40%, var(--bg-darkest) 100%);
             z-index: 0;
         }
 
@@ -53,7 +54,7 @@
         .glow-orb-1 {
             width: 400px;
             height: 400px;
-            background: rgba(95, 179, 161, 0.12);
+            background: rgba(116, 185, 255, 0.12);
             top: 10%;
             left: 5%;
         }
@@ -61,7 +62,7 @@
         .glow-orb-2 {
             width: 350px;
             height: 350px;
-            background: rgba(116, 185, 255, 0.08);
+            background: rgba(0, 206, 201, 0.08);
             bottom: 10%;
             right: 5%;
             animation-delay: -3s;
@@ -101,8 +102,8 @@
             inset: -6px;
             border-radius: 50%;
             border: 2px solid transparent;
-            border-top-color: var(--jade);
-            border-right-color: var(--jade);
+            border-top-color: var(--accent);
+            border-right-color: var(--accent3);
             animation: ringSpin 2s linear infinite;
         }
 
@@ -111,7 +112,7 @@
             position: absolute;
             inset: -14px;
             border-radius: 50%;
-            border: 1px solid rgba(95, 179, 161, 0.2);
+            border: 1px solid rgba(116, 185, 255, 0.2);
             animation: ringPulse 2.5s ease-in-out infinite;
         }
 
@@ -119,13 +120,13 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--teal-mid), var(--teal-dark));
+            background: linear-gradient(135deg, var(--bg-mid), var(--bg-dark));
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 3.5rem;
-            box-shadow: 0 0 40px rgba(95, 179, 161, 0.3), inset 0 0 20px rgba(0,0,0,0.5);
-            border: 2px solid rgba(95, 179, 161, 0.3);
+            box-shadow: 0 0 40px rgba(116, 185, 255, 0.3), inset 0 0 20px rgba(0,0,0,0.5);
+            border: 2px solid rgba(116, 185, 255, 0.3);
         }
 
         @keyframes logoAppear {
@@ -155,7 +156,7 @@
         }
 
         .intro-title .accent {
-            color: var(--jade);
+            color: var(--accent);
             font-style: italic;
         }
 
@@ -184,8 +185,8 @@
             font-size: 1.1rem;
             font-weight: 600;
             font-family: inherit;
-            color: var(--jade);
-            background: rgba(95, 179, 161, 0.04);
+            color: var(--accent);
+            background: rgba(116, 185, 255, 0.04);
             border: none;
             border-radius: 50px;
             cursor: pointer;
@@ -207,7 +208,7 @@
             inset: 0;
             border-radius: 50px;
             padding: 2px;
-            background: linear-gradient(135deg, var(--jade), transparent 40%, transparent 60%, var(--jade-dim));
+            background: linear-gradient(135deg, var(--accent), transparent 40%, transparent 60%, var(--accent2));
             -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
@@ -226,7 +227,7 @@
             position: absolute;
             inset: 0;
             border-radius: 50px;
-            background: linear-gradient(110deg, transparent 30%, rgba(95, 179, 161, 0.15) 50%, transparent 70%);
+            background: linear-gradient(110deg, transparent 30%, rgba(116, 185, 255, 0.15) 50%, transparent 70%);
             background-size: 200% 100%;
             background-position: -100% 0;
             transition: background-position 0.8s ease;
@@ -242,7 +243,7 @@
             position: absolute;
             inset: 0;
             border-radius: 50px;
-            background: linear-gradient(135deg, rgba(95, 179, 161, 0.15), rgba(61, 138, 114, 0.08));
+            background: linear-gradient(135deg, rgba(116, 185, 255, 0.15), rgba(9, 132, 227, 0.08));
             opacity: 0;
             transition: opacity 0.5s ease;
             z-index: 0;
@@ -257,7 +258,7 @@
             position: absolute;
             inset: 0;
             border-radius: 50px;
-            border: 2px solid var(--jade);
+            border: 2px solid var(--accent);
             opacity: 0;
             animation: btnPulse 2.5s ease-out infinite;
             z-index: -1;
@@ -271,7 +272,7 @@
         .enter-btn:hover {
             color: #fff;
             transform: translateY(-4px) scale(1.04);
-            box-shadow: 0 15px 50px rgba(95, 179, 161, 0.35), 0 0 30px rgba(95, 179, 161, 0.15);
+            box-shadow: 0 15px 50px rgba(116, 185, 255, 0.35), 0 0 30px rgba(0, 206, 201, 0.15);
             text-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
         }
 
@@ -314,7 +315,7 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: var(--jade);
+            background: var(--accent);
             opacity: 0.3;
             animation: dotBlink 1.5s ease-in-out infinite;
         }
@@ -346,7 +347,7 @@
         .exit-overlay {
             position: fixed;
             inset: 0;
-            background: var(--teal-darkest);
+            background: var(--bg-darkest);
             z-index: 1000;
             opacity: 0;
             pointer-events: none;
@@ -465,7 +466,7 @@
 
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, Math.max(0.1, p.r), 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(95, 179, 161, ${p.opacity})`;
+                ctx.fillStyle = `rgba(116, 185, 255, ${p.opacity})`;
                 ctx.fill();
             });
 
@@ -477,7 +478,7 @@
                     const dist = Math.sqrt(dx * dx + dy * dy);
                     if (dist < 130) {
                         const op = (1 - dist / 130) * 0.08;
-                        ctx.strokeStyle = `rgba(95, 179, 161, ${op})`;
+                        ctx.strokeStyle = `rgba(116, 185, 255, ${op})`;
                         ctx.lineWidth = 0.5;
                         ctx.beginPath();
                         ctx.moveTo(particles[i].x, particles[i].y);
