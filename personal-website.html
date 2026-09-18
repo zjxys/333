@@ -1915,6 +1915,238 @@
         body.dark-mode .cloud-deco {
             opacity: 0.1;
         }
+
+        /* ====== GPU 加速优化 ====== */
+        .glass-card, .achievement-card, .hobby-card, .stat-item,
+        .skill-item, .info-item, .nav-links a, .btn,
+        .social-link, .qa-quick-btn, .like-btn {
+            will-change: transform, box-shadow;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+
+        /* ====== 增强毛玻璃效果 ====== */
+        body:not(.dark-mode) .glass-card {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        body:not(.dark-mode) .glass-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.8), transparent, rgba(255,255,255,0.3));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        body:not(.dark-mode) nav {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+
+        body:not(.dark-mode) .ai-chat-container,
+        body:not(.dark-mode) .guestbook-container,
+        body:not(.dark-mode) .like-section {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+        }
+
+        /* ====== Canvas 粒子网络 ====== */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* ====== 鼠标拖尾粒子 ====== */
+        .cursor-trail {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9997;
+            mix-blend-mode: screen;
+        }
+
+        /* ====== 3D 卡片倾斜 ====== */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease;
+        }
+
+        .tilt-card .achievement-icon,
+        .tilt-card h4,
+        .tilt-card p,
+        .tilt-card .achievement-year {
+            transform: translateZ(30px);
+        }
+
+        /* ====== 每日金句 ====== */
+        .quote-section {
+            text-align: center;
+            padding: 3rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .quote-card {
+            position: relative;
+            background: linear-gradient(135deg, rgba(116, 185, 255, 0.08), rgba(0, 206, 201, 0.08));
+            border: 2px solid var(--rule);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+        }
+
+        .quote-card:hover {
+            border-color: var(--accent3);
+            box-shadow: 0 20px 60px rgba(116, 185, 255, 0.15);
+        }
+
+        .quote-mark {
+            position: absolute;
+            font-size: 8rem;
+            opacity: 0.08;
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        .quote-mark.left { top: -10px; left: 15px; }
+        .quote-mark.right { bottom: -40px; right: 15px; transform: rotate(180deg); }
+
+        .quote-text {
+            font-size: 1.5rem;
+            line-height: 1.8;
+            color: var(--ink);
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-author {
+            color: var(--accent2);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .quote-refresh {
+            margin-top: 1.5rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(116, 185, 255, 0.1);
+            border: 2px solid var(--accent);
+            border-radius: 25px;
+            color: var(--accent2);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-family: var(--font-xingkai);
+            transition: all 0.3s ease;
+        }
+
+        .quote-refresh:hover {
+            background: var(--accent);
+            color: #fff;
+            transform: rotate(180deg);
+        }
+
+        /* ====== 访客计数器 ====== */
+        .visitor-counter {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(116, 185, 255, 0.08);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            border: 2px solid var(--rule);
+            font-size: 0.9rem;
+            color: var(--accent2);
+        }
+
+        .visitor-counter .vc-digit {
+            display: inline-block;
+            min-width: 1ch;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* ====== 交错动画 ====== */
+        .reveal:nth-child(1) { transition-delay: 0s; }
+        .reveal:nth-child(2) { transition-delay: 0.1s; }
+        .reveal:nth-child(3) { transition-delay: 0.2s; }
+        .reveal:nth-child(4) { transition-delay: 0.3s; }
+        .reveal:nth-child(5) { transition-delay: 0.4s; }
+        .reveal:nth-child(6) { transition-delay: 0.5s; }
+        .reveal:nth-child(7) { transition-delay: 0.6s; }
+
+        /* ====== 渐入缩放动画 ====== */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8) translateY(30px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .reveal.visible {
+            animation: fadeInScale 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* ====== 节日彩蛋 ====== */
+        .easter-egg {
+            position: fixed;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 9996;
+            opacity: 0;
+            animation: eggFly 3s ease-in-out forwards;
+        }
+
+        @keyframes eggFly {
+            0% { opacity: 0; transform: scale(0) rotate(0deg); }
+            20% { opacity: 1; transform: scale(1.2) rotate(20deg); }
+            80% { opacity: 1; transform: scale(1) translateX(200px) rotate(360deg); }
+            100% { opacity: 0; transform: scale(0.5) translateX(400px) rotate(720deg); }
+        }
+
+        /* ====== 平滑body过渡 ====== */
+        body {
+            transition: background 0.5s ease, color 0.3s ease;
+        }
+
+        /* ====== 滚动条美化 ====== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(116, 185, 255, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--accent), var(--accent3));
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--accent2), var(--accent3));
+        }
+
+        /* ====== 选中文本美化 ====== */
+        ::selection {
+            background: rgba(116, 185, 255, 0.3);
+            color: var(--ink);
+        }
     </style>
 </head>
 <body>
@@ -1938,6 +2170,7 @@
 
     <!-- 动态背景 -->
     <div class="animated-bg"></div>
+    <canvas id="particle-canvas"></canvas>
     <div class="cloud-deco c1">☁️</div>
     <div class="cloud-deco c2">☁️</div>
     <div class="cloud-deco c3">☁️</div>
@@ -2241,6 +2474,17 @@
         </div>
     </section>
 
+    <!-- 每日金句 -->
+    <section class="quote-section">
+        <div class="quote-card reveal" id="quoteCard">
+            <span class="quote-mark left">"</span>
+            <p class="quote-text" id="quoteText"> loading... </p>
+            <p class="quote-author" id="quoteAuthor">—</p>
+            <button class="quote-refresh" id="quoteRefresh" onclick="refreshQuote()">🔄 换一句</button>
+            <span class="quote-mark right">"</span>
+        </div>
+    </section>
+
     <!-- 联系我 -->
     <section id="contact">
         <div class="section-title reveal">
@@ -2368,6 +2612,11 @@
     <footer>
         <p>用 <span class="heart">❤</span> 和热爱打造</p>
         <p>© 2026 周剑的个人主页. 保留所有权利.</p>
+        <div style="margin-top: 1rem;">
+            <span class="visitor-counter">
+                👀 访客 <span id="visitorCount">0000</span>
+            </span>
+        </div>
     </footer>
 
     <script>
@@ -2612,6 +2861,251 @@
         }
         window.addEventListener('scroll', animateSkillBars);
         animateSkillBars();
+
+        // ====== Canvas 粒子网络背景 ======
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let canvasParticles = [];
+        let mouse = { x: null, y: null, radius: 150 };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class CanvasParticle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                if (mouse.x !== null) {
+                    const dx = mouse.x - this.x;
+                    const dy = mouse.y - this.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < mouse.radius) {
+                        const force = (mouse.radius - dist) / mouse.radius;
+                        this.x -= dx * force * 0.03;
+                        this.y -= dy * force * 0.03;
+                    }
+                }
+            }
+            draw() {
+                const isDark = document.body.classList.contains('dark-mode');
+                ctx.fillStyle = isDark ? 'rgba(116, 185, 255, 0.5)' : 'rgba(9, 132, 227, 0.4)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initCanvasParticles() {
+            canvasParticles = [];
+            const count = Math.min(80, Math.floor(window.innerWidth / 18));
+            for (let i = 0; i < count; i++) {
+                canvasParticles.push(new CanvasParticle());
+            }
+        }
+        initCanvasParticles();
+
+        function connectParticles() {
+            const maxDist = 120;
+            for (let a = 0; a < canvasParticles.length; a++) {
+                for (let b = a + 1; b < canvasParticles.length; b++) {
+                    const dx = canvasParticles[a].x - canvasParticles[b].x;
+                    const dy = canvasParticles[a].y - canvasParticles[b].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < maxDist) {
+                        const opacity = 1 - dist / maxDist;
+                        const isDark = document.body.classList.contains('dark-mode');
+                        ctx.strokeStyle = isDark
+                            ? `rgba(116, 185, 255, ${opacity * 0.15})`
+                            : `rgba(9, 132, 227, ${opacity * 0.12})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(canvasParticles[a].x, canvasParticles[a].y);
+                        ctx.lineTo(canvasParticles[b].x, canvasParticles[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvasParticles.forEach(p => { p.update(); p.draw(); });
+            connectParticles();
+            requestAnimationFrame(animateCanvas);
+        }
+        animateCanvas();
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+        window.addEventListener('mouseleave', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        // ====== 鼠标拖尾粒子 ======
+        const trailColors = ['#74b9ff', '#00cec9', '#fdcb6e', '#fd79a8', '#55efc4'];
+        let lastTrailTime = 0;
+        document.addEventListener('mousemove', (e) => {
+            const now = Date.now();
+            if (now - lastTrailTime < 40) return;
+            lastTrailTime = now;
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.left = e.clientX + 'px';
+            trail.style.top = e.clientY + 'px';
+            trail.style.background = trailColors[Math.floor(Math.random() * trailColors.length)];
+            trail.style.transition = 'all 0.6s ease-out';
+            document.body.appendChild(trail);
+            requestAnimationFrame(() => {
+                trail.style.transform = 'scale(0) translate(-50%, -50%)';
+                trail.style.opacity = '0';
+            });
+            setTimeout(() => trail.remove(), 600);
+        });
+
+        // ====== 3D 卡片倾斜效果 ======
+        document.querySelectorAll('.achievement-card').forEach(card => {
+            card.classList.add('tilt-card');
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+                const y = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+                card.style.transform = `perspective(800px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) translateY(-8px) scale(1.02)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
+
+        // ====== 每日金句 ======
+        const quotes = [
+            { text: '生命不止，挥拍不息。每一场比赛都是与自己的对话。', author: '羽球人生' },
+            { text: '不要因为没有掌声就放弃自己的梦想。', author: '佚名' },
+            { text: '成功不是偶然，失败不是命运，都是坚持的结果。', author: '励志语录' },
+            { text: '当你想要放弃的时候，想想当初为什么开始。', author: '佚名' },
+            { text: '运动不只是锻炼身体，更是在磨炼意志。', author: '周剑' },
+            { text: '球场如人生，有攻有守，有进有退，贵在坚持。', author: '羽球感悟' },
+            { text: '学习与运动，一个让灵魂充实，一个让身体自由。', author: '周剑' },
+            { text: '每一次挥拍，都是对更好的自己的期待。', author: '羽毛球哲学' },
+            { text: '人生就像打羽毛球，球未落地之前，一切皆有可能。', author: '佚名' },
+            { text: '汗水不会背叛努力，时间不会辜负坚持。', author: '励志名言' },
+            { text: '今天你流的汗，是明天你走的路。', author: '运动格言' },
+            { text: '重要的不是你打得多好，而是你永不放弃。', author: '赛场感悟' },
+        ];
+
+        function loadDailyQuote() {
+            const now = new Date();
+            const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+            const index = dayOfYear % quotes.length;
+            const quote = quotes[index];
+            const quoteText = document.getElementById('quoteText');
+            const quoteAuthor = document.getElementById('quoteAuthor');
+            quoteText.style.opacity = '0';
+            quoteAuthor.style.opacity = '0';
+            setTimeout(() => {
+                quoteText.textContent = quote.text;
+                quoteAuthor.textContent = '— ' + quote.author;
+                quoteText.style.transition = 'opacity 0.5s ease';
+                quoteAuthor.style.transition = 'opacity 0.5s ease';
+                quoteText.style.opacity = '1';
+                quoteAuthor.style.opacity = '1';
+            }, 300);
+        }
+        loadDailyQuote();
+
+        window.refreshQuote = function() {
+            const random = Math.floor(Math.random() * quotes.length);
+            const quote = quotes[random];
+            const quoteText = document.getElementById('quoteText');
+            const quoteAuthor = document.getElementById('quoteAuthor');
+            quoteText.style.opacity = '0';
+            quoteAuthor.style.opacity = '0';
+            setTimeout(() => {
+                quoteText.textContent = quote.text;
+                quoteAuthor.textContent = '— ' + quote.author;
+                quoteText.style.opacity = '1';
+                quoteAuthor.style.opacity = '1';
+            }, 300);
+        };
+
+        // ====== 访客计数器 ======
+        function animateVisitorCount() {
+            const el = document.getElementById('visitorCount');
+            const stored = localStorage.getItem('visitCount_333');
+            let count = parseInt(stored || '0') + 1;
+            localStorage.setItem('visitCount_333', count);
+            const baseCount = 2026 + count;
+            const targetStr = String(baseCount).padStart(4, '0');
+            let current = 0;
+            const target = parseInt(targetStr);
+            const duration = 1500;
+            const startTime = Date.now();
+            function tick() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                current = Math.floor(eased * target);
+                el.textContent = String(current).padStart(4, '0');
+                if (progress < 1) requestAnimationFrame(tick);
+            }
+            tick();
+        }
+        setTimeout(animateVisitorCount, 1000);
+
+        // ====== 节日彩蛋 ======
+        function triggerEasterEgg() {
+            const eggs = ['🏸', '✨', '🌟', '💫', '🎉', '⭐'];
+            const egg = document.createElement('div');
+            egg.className = 'easter-egg';
+            egg.textContent = eggs[Math.floor(Math.random() * eggs.length)];
+            egg.style.left = (Math.random() * 80 + 10) + '%';
+            egg.style.top = (Math.random() * 80 + 10) + '%';
+            document.body.appendChild(egg);
+            setTimeout(() => egg.remove(), 3000);
+        }
+
+        let konamiSequence = [];
+        const konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+        document.addEventListener('keydown', (e) => {
+            konamiSequence.push(e.key);
+            if (konamiSequence.length > konamiCode.length) konamiSequence.shift();
+            if (konamiSequence.join(',') === konamiCode.join(',')) {
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(triggerEasterEgg, i * 200);
+                }
+                konamiSequence = [];
+            }
+        });
+
+        // 连续点击logo 5次触发彩蛋
+        let logoClickCount = 0;
+        let logoClickTimer = null;
+        document.querySelector('.logo').addEventListener('click', () => {
+            logoClickCount++;
+            clearTimeout(logoClickTimer);
+            logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 2000);
+            if (logoClickCount >= 5) {
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(triggerEasterEgg, i * 150);
+                }
+                logoClickCount = 0;
+            }
+        });
 
         // 表单提交处理
         const contactForm = document.getElementById('contactForm');
